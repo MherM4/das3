@@ -39,18 +39,15 @@ class InteractionController extends Controller
         return view('posts.saved', compact('posts'));
     }
 
-    public function storeComment(Request $request, Post $post) {
-        $request->validate([
-            'body' => 'required|max:500'
-        ]);
+    public function storeComment(StoreCommentRequest $request, Post $post)
+{
+    $post->comments()->create([
+        'user_id' => auth()->id(),
+        'body' => $request->validated()['body'] 
+    ]);
 
-        $post->comments()->create([
-            'user_id' => auth()->id(),
-            'body' => $request->body
-        ]);
-
-        return back();
-    }
+    return back();
+}
 
     public function destroyComment(Comment $comment) {
         if (auth()->id() === $comment->user_id ||

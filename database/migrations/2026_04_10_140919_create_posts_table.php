@@ -18,6 +18,11 @@ return new class extends Migration
             $table->text('body');
             $table->string('image')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+            $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->onDelete('set null');
+
+
         });
     }
 

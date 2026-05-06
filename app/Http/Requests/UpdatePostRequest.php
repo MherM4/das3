@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorePostRequest extends FormRequest
+class UpdatePostRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -16,11 +16,10 @@ class StorePostRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'body' => 'required|string',
-            'images' => 'nullable|array|max:5',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:51020',
+            'category_id' => 'required|exists:categories,id',
             'tags' => 'nullable|array',
             'tags.*' => 'exists:tags,id',
-            'category_id' => 'required|exists:categories,id',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ];
     }
 
@@ -28,10 +27,8 @@ class StorePostRequest extends FormRequest
     {
         return [
             'title.required' => 'Վերնագիրը պարտադիր է:',
-            'body.required' => 'Բովանդակությունը պարտադիր է:',
+            'category_id.required' => 'Խնդրում ենք ընտրել կատեգորիան:',
             'images.*.image' => 'Ֆայլը պետք է լինի նկար:',
-            'images.*.max' => 'Նկարի չափը չպետք է անցնի 50MB-ը:',
-            'images.max' => 'Դուք կարող եք վերբեռնել առավելագույնը 5 նկար:',
         ];
     }
 }

@@ -12,9 +12,11 @@
         </div>
     @endforelse
 
+
+
     @if(method_exists($posts, 'links'))
-        <div style="margin-top: 30px;">
-            {{ $posts->links() }}
+        <div class="d-flex justify-content-center my-4">
+            {{ $posts->appends(request()->query())->links() }}
         </div>
     @endif
 </main>
@@ -24,4 +26,29 @@
         background-color: #f8f9fa;
         margin: 0;
     }
+    nav svg {
+    max-height: 20px;
+    display: inline-block;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    gap: 5px;
+}
+
+.page-item .page-link {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #007bff;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
 </style>
+

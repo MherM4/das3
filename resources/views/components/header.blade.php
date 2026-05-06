@@ -8,6 +8,8 @@
         </nav>
     </div>
 
+
+
     <nav style="display: flex; align-items: center; gap: 25px;">
         <div class="user-dropdown" style="position: relative; display: inline-block;">
             <button onclick="toggleMenu()" style="background: none; border: none; display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 5px 10px; border-radius: 8px; transition: 0.3s;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='none'">
@@ -44,8 +46,9 @@
             </div>
         </div>
     </nav>
-</header>
 
+</header>
+<x-Subheader />
 <style>
     .dropdown-item {
         display: block;

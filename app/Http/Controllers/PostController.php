@@ -5,17 +5,39 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Tag;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 
 class PostController extends Controller
 {
-    public function index()
-    {
-        $posts = Post::with(['user', 'images', 'likes', 'comments'])->latest()->get();
-        return view('posts.index', compact('posts'));
+    public function index(Request $request)
+{
+    $query = Post::with(['user', 'images', 'likes', 'comments', 'category', 'tags']);
+
+    if ($request->filled('category_id')) {
+        $query->where('category_id', $request->category_id);
+    }
+
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('title', 'LIKE', "%{$search}%")
+              ->orWhere('body', 'LIKE', "%{$search}%")
+              ->orWhereHas('tags', function($t) use ($search) {
+                  $t->where('name', 'LIKE', "%{$search}%");
+              });
+        });
+    }
+
+    $posts = $query->latest()->paginate(10);;
+    $categories = Category::all();
+
+    return view('posts.index', compact('posts', 'categories'));
     }
 
     public function userPosts(User $user)
@@ -35,57 +57,58 @@ class PostController extends Controller
         if (auth()->id() !== $post->user_id && auth()->user()->role !== 'admin' && auth()->user()->role !== 'super_admin') {
             abort(403);
         }
+        $tags = Tag::all();
+        $categories = Category::all();
 
-        return view('posts.edit', compact('post'));
+        return view('posts.edit', compact('post','tags','categories'));
     }
 
     public function update(Request $request, Post $post)
-    {
-        if (auth()->id() !== $post->user_id && auth()->user()->role !== 'admin' && auth()->user()->role !== 'super_admin') {
-            abort(403);
-        }
-
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'body' => 'required|string',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120',
-        ]);
-
-        $post->update([
-            'title' => $request->title,
-            'body' => $request->body,
-        ]);
-
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $file) {
-                $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('posts'), $imageName);
-                $post->images()->create(['image' => 'posts/' . $imageName]);
-            }
-        }
-
-        return redirect()->route('posts.manage')->with('success', 'Գրառումը թարմացվեց:');
+{
+    if (auth()->id() !== $post->user_id && auth()->user()->role !== 'admin' && auth()->user()->role !== 'super_admin') {
+        abort(403);
     }
+
+    $post->update($request->validated());
+
+    $post->tags()->sync($request->tags);
+
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $file) {
+            $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('posts'), $imageName);
+            $post->images()->create(['image' => 'posts/' . $imageName]);
+        }
+    }
+
+    return redirect()->route('posts.manage')->with('success', 'Գրառումը թարմացվեց:');
+}
 
     public function create()
     {
-        return view('posts.create');
+        $tags = Tag::all();
+        $categories = Category::all();
+        return view('posts.create', compact('tags','categories'));
     }
 
     public function store(StorePostRequest $request)
-    {
-        $post = auth()->user()->posts()->create($request->validated());
+{
+    $post = auth()->user()->posts()->create($request->validated());
 
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $file) {
-                $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('posts'), $imageName);
-                $post->images()->create(['image' => 'posts/' . $imageName]);
-            }
-        }
-
-        return redirect('/')->with('success', 'Գրառումը հաջողությամբ ստեղծվեց:');
+    if ($request->has('tags')) {
+        $post->tags()->sync($request->tags);
     }
+
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $file) {
+            $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('posts'), $imageName);
+            $post->images()->create(['image' => 'posts/' . $imageName]);
+        }
+    }
+
+    return redirect('/')->with('success', 'Գրառումը հաջողությամբ ստեղծվեց:');
+}
 
     public function destroy(Post $post)
     {

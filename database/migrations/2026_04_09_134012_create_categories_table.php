@@ -9,9 +9,13 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up() {
-        Schema::table('posts', function (Blueprint $table) { $table->softDeletes(); });
-        Schema::table('post_images', function (Blueprint $table) { $table->softDeletes(); });
+    public function up(): void
+    {
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -19,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('posts_tables', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('categories');
     }
 };

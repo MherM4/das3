@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('role')->default('user');
             $table->string('avatar')->nullable();
             $table->string('password');
+            $table->boolean('is_blocked')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

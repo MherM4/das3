@@ -12,7 +12,7 @@ class Post extends Model
     use SoftDeletes;
 
 
-    protected $fillable = ['title', 'body', 'image', 'user_id'];
+    protected $fillable = ['title', 'body', 'image', 'user_id','category_id'];
 
     public function getImageUrlAttribute()
     {
@@ -54,5 +54,13 @@ class Post extends Model
 
     public function isSavedByAuthUser() {
         return $this->saves()->where('user_id', auth()->id())->exists();
+    }
+
+    public function tags() {
+    return $this->belongsToMany(Tag::class);
+    }
+
+    public function category() {
+        return $this->belongsTo(Category::class);
     }
 }

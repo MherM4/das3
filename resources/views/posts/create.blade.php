@@ -47,6 +47,24 @@
                       onfocus="this.style.border='2px solid #007bff'"></textarea>
         </div>
 
+        <label for="tags">Ընտրեք տագերը:</label>
+            <select name="tags[]" id="tags" class="form-control" multiple>
+             @foreach($tags as $tag)
+                <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                @endforeach
+            </select>
+
+            <div style="margin-bottom: 25px;">
+    <label style="display: block; font-weight: 600; color: #444; margin-bottom: 8px;">Կատեգորիա</label>
+    <select name="category_id" id="category_id" required
+            style="width: 100%; padding: 14px; border: 2px solid #f0f0f0; border-radius: 12px; font-size: 16px; outline: none; background: #fff;">
+        <option value="" disabled selected>Ընտրեք կատեգորիան</option>
+        @foreach($categories as $category)
+            <option value="{{ $category->id }}">{{ $category->name }}</option>
+        @endforeach
+    </select>
+</div>
+
         <button type="submit" style="width: 100%; background: #007bff; color: white; border: none; padding: 16px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,123,255,0.3);">
             Հրապարակել գրառումը
         </button>

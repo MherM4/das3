@@ -2,21 +2,21 @@
 
 namespace Database\Seeders;
 
-use App\Gitic\database\seeders\AdminSeeder;use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
         $this->call([
-            AdminSeeder::class,
+           AdminSeeder::class,
+            UserSeeder::class,
+            TagSeeder::class,
+            CategorySeeder::class,
+            PostSeeder::class,
         ]);
     }
 }
