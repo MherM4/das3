@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;use App\Models\User;
+use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -16,17 +17,19 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    public function register(Request $request)
-    {
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'user',
-        ]);
+    public function register(RegisterRequest $request) 
+{
+    $data = $request->validated();
 
-        return redirect('/login')->with('success', 'Գրանցումն հաջողվեց։ Կարող եք մուտք գործել։');
-    }
+    User::create([
+        'name' => $data['name'],
+        'email' => $data['email'],
+        'password' => Hash::make($data['password']),
+        'role' => 'user',
+    ]);
+
+    return redirect('/login')->with('success', 'Գրանցումն հաջողվեց։ Կարող եք մուտք գործել։');
+}
 
     public function showLogin()
     {

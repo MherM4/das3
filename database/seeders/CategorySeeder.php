@@ -10,14 +10,29 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            ['name' => 'Technology'],
-            ['name' => 'Sport'],
-            ['name' => 'Jokes'],
-            ['name' => 'Cats'],
+            [
+                'name' => [
+                    'hy' => 'Տնտեսություն',
+                    'en' => 'Economy'
+                ],
+            ],
+            [
+                'name' => [
+                    'hy' => 'Սպորտ',
+                    'en' => 'Sport'
+                ],
+            ],
+            [
+                'name' => [
+                    'hy' => 'Տեխնոլոգիաներ',
+                    'en' => 'Technologies'
+                ],
+            ],
         ];
 
-        foreach ($categories as $category) {
-            Category::updateOrCreate(['name' => $category['name']], $category);
+        foreach ($categories as $cat) {
+            Category::create([ 'name' => json_encode($cat['name'])
+            ]);
         }
     }
 }

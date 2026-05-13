@@ -1,132 +1,111 @@
-@include('components.header')
+<x-app-layout>
+    <x-slot:title>Կառավարման վահանակ</x-slot:title>
 
-<main style="max-width: 1100px; margin: 30px auto; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); font-family: sans-serif;">
-
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #f4f4f4; padding-bottom: 15px;">
-        <h1 style="margin: 0; color: #333; font-size: 24px;">Օգտատերերի կառավարում</h1>
-
-        <div style="position: relative;">
-            <input type="text" id="searchInput" oninput="liveSearch()"
-                   placeholder="Արագ որոնում..."
-                   style="padding: 10px 15px; border: 1px solid #ddd; border-radius: 8px; width: 300px; outline: none; transition: border 0.3s; font-size: 15px;">
+<main class="admin-container">
+    <div class="admin-header">
+        <h1>{{ __('messages.user_managment') }}</h1>
+        <div class="search-box">
+            <input type="text" id="searchInput" oninput="liveSearch()" placeholder="{{ __('messages.quick_search') }}">
         </div>
     </div>
 
     @if(session('success'))
-        <div style="background: #d4edda; color: #155724; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
-            {{ session('success') }}
-        </div>
+        <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
     <div style="overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <table class="user-table">
             <thead>
-            <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-                <th style="padding: 15px; color: #555;">ID</th>
-                <th style="padding: 15px; color: #555;">Անուն</th>
-                <th style="padding: 15px; color: #555;">Email</th>
-                <th style="padding: 15px; color: #555;">Դեր</th>
-                <th style="padding: 15px; color: #555;">Կարգավիճակ</th>
-                <th style="padding: 15px; color: #555; text-align: center;">Գործողություն</th>
-            </tr>
+                <tr>
+                    <th>ID</th>
+                    <th>{{ __('messages.name') }}</th>
+                    <th>{{ __('messages.email') }}</th>
+                    <th>{{ __('messages.role') }}</th>
+                    <th>{{ __('messages.status') }}</th>
+                    <th style="text-align: center;">{{ __('messages.action') }}</th>
+                </tr>
             </thead>
             <tbody id="userTable">
-            @foreach($users as $user)
-                <tr class="user-row" style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 15px; color: #777;">#{{ $user->id }}</td>
+                @foreach($users as $user)
+                    <tr class="user-row">
+                        <td>#{{ $user->id }}</td>
+                        <td class="search-name">
+                            <a href="{{ route('user.profile', $user->id) }}">{{ $user->name }}</a>
+                        </td>
+                        <td class="search-email">{{ $user->email }}</td>
 
-                    <td class="search-name" style="padding: 15px; font-weight: 500;">
-                        <a href="{{ route('user.profile', $user->id) }}" style="text-decoration: none; color: #007bff; font-weight: bold; border-bottom: 1px dashed #007bff;">
-                            {{ $user->name }}
-                        </a>
-                    </td>
-
-                    <td class="search-email" style="padding: 15px; color: #555;">{{ $user->email }}</td>
-
-                    <td style="padding: 15px;">
-                        @if(auth()->user()->role === 'super_admin')
-                            @if($user->role === 'super_admin')
-                                <span style="padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; background: #cce5ff; color: #004085; text-transform: uppercase;">
-                                    SUPER ADMIN
-                                </span>
-                            @else
+                        <td>
+                            @can('changeRole', $user)
                                 <form action="{{ route('admin.users.role', $user->id) }}" method="POST">
                                     @csrf
-                                    <select name="role" onchange="this.form.submit()" style="padding: 5px; border-radius: 5px; border: 1px solid #ddd; background: #fff; cursor: pointer;">
-                                        <option value="user" {{ $user->role == 'user' ? 'selected' : '' }}>User</option>
-                                        <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
+                                    <select name="role" onchange="this.form.submit()" class="role-select">
+                                        <option value="user" {{ $user->role == 'user' ? 'selected' : '' }}>{{ __('messages.user') }}</option>
+                                        <option value="moderator" {{ $user->role == 'moderator' ? 'selected' : '' }}>{{ __('messages.moderator') }}</option>
+                                        @if(auth()->user()->role === 'super_admin')
+                                            <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>{{ __('messages.admin') }}</option>
+                                        @endif
                                     </select>
                                 </form>
-                            @endif
-                        @else
-                            <span style="padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; background: #e2e3e5; text-transform: capitalize;">
-                                {{ $user->role }}
-                            </span>
-                        @endif
-                    </td>
-
-                    <td style="padding: 15px;">
-                        <span style="padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; background: {{ $user->is_blocked ? '#f8d7da' : '#d4edda' }}; color: {{ $user->is_blocked ? '#721c24' : '#155724' }};">
-                            {{ $user->is_blocked ? 'Բլոկված' : 'Ակտիվ' }}
-                        </span>
-                    </td>
-
-                    <td style="padding: 15px; text-align: center;">
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
-                            @if($user->role !== 'super_admin')
-                                @if(auth()->user()->role === 'super_admin')
-                                    <a href="{{ route('admin.users.edit', $user->id) }}"
-                                       style="text-decoration: none; font-size: 18px;" title="Խմբագրել">
-                                        ✏️
-                                    </a>
-                                @endif
-                                <form action="{{ route('admin.users.block', $user->id) }}" method="POST" style="margin: 0;">
-                                    @csrf
-                                    <button type="submit" style="padding: 8px 14px; cursor: pointer; background: {{ $user->is_blocked ? '#28a745' : '#dc3545' }}; color: white; border: none; border-radius: 6px; font-size: 12px; font-weight: bold; transition: 0.3s;">
-                                        {{ $user->is_blocked ? 'Ապաբլոկել' : 'Բլոկել' }}
-                                    </button>
-                                </form>
                             @else
-                                <span style="color: #ccc; font-size: 12px; font-style: italic;">Անձեռնմխելի</span>
-                            @endif
-                        </div>
-                    </td>
-                </tr>
-            @endforeach
+                                <span class="badge badge-role">{{ $user->role }}</span>
+                            @endcan
+                        </td>
+
+                        <td>
+                            <span class="badge {{ $user->is_blocked ? 'badge-danger' : 'badge-success' }}">
+                                {{ $user->is_blocked ? __('messages.blocked') : __('messages.active') }}
+                            </span>
+                        </td>
+
+                        <td style="text-align: center;">
+                            <div class="action-buttons">
+                                @can('manage', $user)
+                                    @can('before', auth()->user())
+                                        <a href="{{ route('admin.users.edit', $user->id) }}" title="{{ __('messages.edit') }}">✏️</a>
+                                    @endcan
+
+                                    <form action="{{ route('admin.users.block', $user->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn {{ $user->is_blocked ? 'btn-unblock' : 'btn-block' }}">
+                                           {{ $user->is_blocked ? __('messages.blocked') : __('messages.active') }}
+                                        </button>
+                                    </form>
+                                @else
+                                    <span class="lock-icon">🔒</span>
+                                @endcan
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
 
-        <div id="noResults" style="display: none; padding: 40px; text-align: center; color: #888; background: #fdfdfd; border-radius: 10px; margin-top: 10px;">
-            🔍 Ոչինչ չգտնվեց ձեր որոնման հիման վրա:
+        <div id="noResults" class="no-results" style="display: none;">
+            {{ __('messages.nothing_w_found') }}
         </div>
     </div>
 </main>
 
-<script>
-    function liveSearch() {
-        let input = document.getElementById('searchInput').value.toLowerCase();
-        let rows = document.querySelectorAll('.user-row');
-        let noResults = document.getElementById('noResults');
-        let found = false;
-
-        rows.forEach(row => {
-            let name = row.querySelector('.search-name').textContent.toLowerCase();
-            let email = row.querySelector('.search-email').textContent.toLowerCase();
-
-            if (name.includes(input) || email.includes(input)) {
-                row.style.display = "";
-                found = true;
-            } else {
-                row.style.display = "none";
-            }
-        });
-
-        noResults.style.display = found ? "none" : "block";
-    }
-</script>
-
 <style>
-    #searchInput:focus {border-color: #007bff !important;box-shadow: 0 0 8px rgba(0,123,255,0.1);}
-    .search-name a:hover {color: #0056b3 !important;border-bottom-style: solid !important;}
-    button:hover {opacity: 0.8;}
+    .admin-container { max-width: 1100px; margin: 30px auto; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); font-family: sans-serif; }
+    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #f4f4f4; padding-bottom: 15px; }
+    .search-box input { padding: 10px 15px; border: 1px solid #ddd; border-radius: 8px; width: 300px; outline: none; transition: 0.3s; }
+    .search-box input:focus { border-color: #007bff; box-shadow: 0 0 8px rgba(0,123,255,0.1); }
+
+    .user-table { width: 100%; border-collapse: collapse; }
+    .user-table th { background: #f8f9fa; padding: 15px; color: #555; text-align: left; }
+    .user-row { border-bottom: 1px solid #eee; }
+    .user-row td { padding: 15px; }
+
+    .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+    .badge-success { background: #d4edda; color: #155724; }
+    .badge-danger { background: #f8d7da; color: #721c24; }
+    .badge-role { background: #e2e3e5; color: #333; }
+
+    .btn { padding: 8px 14px; cursor: pointer; border: none; border-radius: 6px; font-size: 12px; font-weight: bold; color: white; }
+    .btn-block { background: #dc3545; }
+    .btn-unblock { background: #28a745; }
+    .action-buttons { display: flex; align-items: center; justify-content: center; gap: 15px; }
+    .lock-icon { color: #ccc; font-size: 12px; font-style: italic; }
 </style>
+</x-app-layout>

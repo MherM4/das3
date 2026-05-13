@@ -2,18 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Admin\UpdateUserRequest;
+use App\Http\Requests\Admin\ChangeRoleRequest;
+use App\Http\Requests\Admin\SearchUserRequest;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Post;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
+    use AuthorizesRequests;
+
     public function adminDashboard()
     {
+        $this->authorize('viewAny', User::class);
+
         $stats = [
             'users_count' => User::count(),
             'posts_count' => Post::count(),
@@ -26,57 +32,68 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('stats', 'latest_users'));
     }
 
-    public function adminUsers(Request $request)
+    public function adminUsers(SearchUserRequest $request)
     {
-        $query = User::where('id', '!=', Auth::id());
+        $this->authorize('viewAny', User::class);
+
+        $query = User::where('id', '!=', auth()->id());
 
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = $request->validated('search');
             $query->where(function($q) use ($search) {
                 $q->where('name', 'like', "%$search%")->orWhere('email', 'like', "%$search%");
             });
         }
 
-        $users = $query->get();
+        $users = $query->paginate(10);
+
         return view('admin.users', compact('users'));
     }
 
     public function toggleBlock(User $user)
-    {
-        if ($user->role === 'super_admin') {
-            return back()->with('error', 'Super Admin-ին հնարավոր չէ բլոկել:');
-        }
+{
+    $this->authorize('manage', $user);
 
-        $user->update(['is_blocked' => !$user->is_blocked]);
-        return back()->with('success', 'Կարգավիճակը թարմացվեց:');
+    $user->update(['is_blocked' => !$user->is_blocked]);
+
+    if ($user->is_blocked) {
+        $user->likes()->delete();
+
+        $user->comments()->delete();
+
+        $message = 'Օգտատերը բլոկվեց, և նրա լայքերն ու մեկնաբանությունները հեռացվեցին:';
+    } else {
+        $message = 'Օգտատերը հանվեց բլոկից:';
     }
 
-    public function changeRole(Request $request, User $user)
+    return back()->with('success', $message);
+}
+
+    public function changeRole(ChangeRoleRequest $request, User $user)
     {
-        $request->validate(['role' => 'required|in:user,admin']);
-        $user->update(['role' => $request->role]);
+        $this->authorize('changeRole', $user);
+
+        $user->update($request->validated());
 
         return back()->with('success', 'Օգտատիրոջ դերը թարմացվեց:');
     }
 
     public function editUser(User $user)
     {
+        $this->authorize('manage', $user);
         return view('admin.edit_user', compact('user'));
     }
 
-    public function updateUser(Request $request, User $user)
+    public function updateUser(UpdateUserRequest $request, User $user)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8',
-        ]);
+        $this->authorize('manage', $user);
 
-        $user->name = $request->name;
-        $user->email = $request->email;
+        $data = $request->validated();
+        $user->name = $data['name'];
+        $user->email = $data['email'];
 
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
+        if (!empty($data['password'])) {
+            $user->password = Hash::make($data['password']);
         }
 
         $user->save();
@@ -85,6 +102,8 @@ class AdminController extends Controller
 
     public function adminDeleteAvatar(User $user)
     {
+        $this->authorize('manage', $user);
+
         if ($user->avatar) {
             Storage::disk('public')->delete($user->avatar);
             $user->update(['avatar' => null]);

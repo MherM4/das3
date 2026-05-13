@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Requests\UpdatePasswordRequest;
-use App\Http\Controllers\Controller;use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -25,14 +26,14 @@ class ProfileController extends Controller
     {
         return view('auth.edit', ['user' => Auth::user()]);
     }
-    public function updateProfile(Request $request)
+    public function updateProfile(UpdateProfileRequest $request)
     {
         $user = Auth::user();
 
         $validated = $request->validated();
 
-        $user->name = $request->name;
-        $user->email = $request->email;
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
 
         if ($request->hasFile('avatar')) {
             if ($user->avatar) Storage::disk('public')->delete($user->avatar);
@@ -59,15 +60,17 @@ class ProfileController extends Controller
         return view('auth.change-password');
     }
 
-    public function updatePassword(Request $request)
+    public function updatePassword(UpdatePasswordRequest $request)
     {
-   
+        $user = Auth::user();
+        $validated = $request->validated();
 
-        if (!Hash::check($request->current_password, Auth::user()->password)) {
+        if (!Hash::check($validated['current_password'], $user->password)) {
             return back()->withErrors(['current_password' => 'Ընթացիկ գաղտնաբառը սխալ է:']);
         }
 
-        Auth::user()->update(['password' => Hash::make($request->new_password)]);
+        $user->update([ 'password' => Hash::make($validated['new_password'])]);
+        
         return redirect()->route('profile')->with('success', 'Գաղտնաբառը փոխվեց:');
     }
 

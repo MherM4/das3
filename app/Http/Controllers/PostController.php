@@ -12,19 +12,26 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Http\Requests\FilterPostRequest;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 
 class PostController extends Controller
 {
-    public function index(Request $request)
+    use AuthorizesRequests;
+    public function index(FilterPostRequest $request)
 {
     $query = Post::with(['user', 'images', 'likes', 'comments', 'category', 'tags']);
 
-    if ($request->filled('category_id')) {
-        $query->where('category_id', $request->category_id);
+    $validated = $request->validated();
+
+
+    if (!empty($validated['category_id'])) {
+        $query->where('category_id', $validated['category_id']);
     }
 
-    if ($request->filled('search')) {
-        $search = $request->search;
+    if (!empty($validated['search'])) {
+        $search = $validated['search'];
         $query->where(function($q) use ($search) {
             $q->where('title', 'LIKE', "%{$search}%")
               ->orWhere('body', 'LIKE', "%{$search}%")
@@ -34,7 +41,7 @@ class PostController extends Controller
         });
     }
 
-    $posts = $query->latest()->paginate(10);;
+    $posts = $query->latest()->paginate(10);
     $categories = Category::all();
 
     return view('posts.index', compact('posts', 'categories'));
@@ -54,22 +61,20 @@ class PostController extends Controller
 
     public function edit(Post $post)
     {
-        if (auth()->id() !== $post->user_id && auth()->user()->role !== 'admin' && auth()->user()->role !== 'super_admin') {
-            abort(403);
-        }
+        $this->authorize('update', $post);
+
         $tags = Tag::all();
         $categories = Category::all();
 
         return view('posts.edit', compact('post','tags','categories'));
     }
 
-    public function update(Request $request, Post $post)
+    public function update(UpdatePostRequest $request, Post $post)
 {
-    if (auth()->id() !== $post->user_id && auth()->user()->role !== 'admin' && auth()->user()->role !== 'super_admin') {
-        abort(403);
-    }
+    $this->authorize('update', $post);
 
     $post->update($request->validated());
+
 
     $post->tags()->sync($request->tags);
 
@@ -112,9 +117,7 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
-        if (auth()->id() !== $post->user_id && auth()->user()->role !== 'admin' && auth()->user()->role !== 'super_admin') {
-            abort(403);
-        }
+        $this->authorize('update', $post);
 
         $post->deleted_by = auth()->id();
         $post->save();
@@ -135,7 +138,7 @@ class PostController extends Controller
 
         return view('posts.trash', [
             'posts' => $posts,
-            'title' => 'Իմ աղբամանը'
+            'title' => __('messages.my_trash')
         ]);
     }
 
@@ -149,7 +152,7 @@ class PostController extends Controller
 
         return view('posts.trash', [
             'posts' => $posts,
-            'title' => 'Ընդհանուր աղբաման (Admin)'
+            'title' =>  __('messages.general_trash')
         ]);
     }
 

@@ -1,4 +1,5 @@
-@include('components.header')
+<x-app-layout>
+    <x-slot:title>Կառավարման վահանակ</x-slot:title>
 
 <main style="max-width: 900px; margin: 30px auto; padding: 25px; font-family: sans-serif;">
 
@@ -10,14 +11,14 @@
             <div style="margin-top: 20px;">
                 <a href="{{ route('profile.edit') }}"
                    style="text-decoration: none; background: #007bff; color: white; padding: 10px 25px; border-radius: 8px; font-weight: bold; display: inline-block;">
-                    ⚙️ Խմբագրել պրոֆիլը
+                    {{ __('messages.edit_profile') }}
                 </a>
             </div>
         @endif
     </div>
 
     <h3 style="margin-bottom: 20px; color: #444; border-left: 5px solid #007bff; padding-left: 15px;">
-        Գրառումներ ({{ $posts->count() }})
+        {{ __('messages.posts') }} ({{ $posts->count() }})
     </h3>
 
     @forelse($posts as $post)
@@ -26,7 +27,7 @@
 
     @empty
         <div style="text-align: center; padding: 50px; background: #fff; border-radius: 12px; color: #888; font-style: italic;">
-            Այս օգտատերը դեռ ոչ մի գրառում չի կատարել:
+            {{ __('messages.user_not_post_yet') }}
         </div>
     @endforelse
 
@@ -45,3 +46,5 @@
         }
     }
 </script>
+
+</x-app-layout>

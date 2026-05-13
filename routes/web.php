@@ -5,7 +5,9 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InteractionController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 
 
 Route::middleware(['guest'])->group(function () {
@@ -16,6 +18,8 @@ Route::middleware(['guest'])->group(function () {
         Route::post('/register', 'register');
     });
 });
+
+Route::get('lang/{locale}', function ($locale) {if (in_array($locale, ['en', 'hy'])) {  Session::put('locale', $locale);} return redirect()->back();})->name('lang.switch');
 
 Route::middleware(['auth', 'no-cache'])->group(function () {
 
@@ -29,6 +33,10 @@ Route::middleware(['auth', 'no-cache'])->group(function () {
         Route::get('/saved-posts', 'savedPosts')->name('posts.saved');
         Route::delete('/comments/{comment}', 'destroyComment')->name('comments.destroy');
     });
+    Route::post('/categories/store', [CategoryController::class, 'store'])->name('categories.store');
+    Route::get('/admin/categories', [CategoryController::class, 'index'])->name('admin.categories');
+    Route::post('/admin/categories', [CategoryController::class, 'store'])->name('categories.store');
+    Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/profile', 'showProfile')->name('profile');

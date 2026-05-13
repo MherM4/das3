@@ -1,10 +1,11 @@
-@include('components.header')
+<x-app-layout>
+    <x-slot:title>Կառավարման վահանակ</x-slot:title>
 
 <main style="max-width: 1000px; margin: 30px auto; padding: 25px; font-family: 'Segoe UI', sans-serif;">
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px;">
         <h1 style="color: #333; margin: 0; font-size: 24px;">{{ $title }}</h1>
         <span style="background: #6c757d; color: white; padding: 5px 12px; border-radius: 20px; font-size: 14px; font-weight: bold;">
-            {{ $posts->count() }} գրառում
+            {{ $posts->count() }} {{ __('messages.post') }}
         </span>
     </div>
 
@@ -18,15 +19,15 @@
         <table style="width: 100%; border-collapse: collapse; text-align: left;">
             <thead>
             <tr style="background: #f8f9fa; border-bottom: 2px solid #f1f1f1;">
-                <th style="padding: 18px 15px; color: #555; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">Վերնագիր</th>
+                <th style="padding: 18px 15px; color: #555; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">{{ __('messages.title') }}</th>
 
-                @if($title !== 'Իմ աղբամանը')
-                    <th style="padding: 18px 15px; color: #555; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">Հեղինակ</th>
-                    <th style="padding: 18px 15px; color: #555; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">Ջնջող</th>
+                @if($title !== __('messages.my_trash'))
+                    <th style="padding: 18px 15px; color: #555; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">{{ __('messages.author') }}</th>
+                    <th style="padding: 18px 15px; color: #555; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">{{ __('messages.deleter') }}</th>
                 @endif
 
-                <th style="padding: 18px 15px; color: #555; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">Ջնջվել է</th>
-                <th style="padding: 18px 15px; color: #555; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; text-align: right;">Գործողություն</th>
+                <th style="padding: 18px 15px; color: #555; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">{{ __('messages.deleted') }}</th>
+                <th style="padding: 18px 15px; color: #555; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; text-align: right;">{{ __('messages.action') }}</th>
             </tr>
             </thead>
             <tbody>
@@ -36,7 +37,7 @@
                         <strong style="color: #333; display: block; font-size: 15px;">{{ $post->title }}</strong>
                     </td>
 
-                    @if($title !== 'Իմ աղբամանը')
+                   @if($title !== __('messages.my_trash'))
                         <td style="padding: 15px;">
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <img src="{{ $post->user->avatar_url }}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #eee;">
@@ -47,10 +48,10 @@
                             @if($post->deleter)
                                 <span style="display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold;
                                     {{ $post->deleter->id === $post->user_id ? 'background: #e9ecef; color: #495057;' : 'background: #fff5f5; color: #e53e3e; border: 1px solid #feb2b2;' }}">
-                                    {{ $post->deleter->id === $post->user_id ? '🏠 Հեղինակը' : '👮 ' . $post->deleter->name }}
+                                    {{ $post->deleter->id === $post->user_id ? __('messages.author') : '👮 ' . $post->deleter->name }}
                                 </span>
                             @else
-                                <span style="color: #ccc; font-size: 12px; font-style: italic;">Անհայտ</span>
+                                <span style="color: #ccc; font-size: 12px; font-style: italic;">{{ __('messages.unknown') }}</span>
                             @endif
                         </td>
                     @endif
@@ -65,16 +66,16 @@
                                 @csrf
                                 <button type="submit" style="background: #28a745; color: white; border: none; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.3s;"
                                         onmouseover="this.style.background='#218838'" onmouseout="this.style.background='#28a745'">
-                                    Վերականգնել
+                                    {{ __('messages.restore') }}
                                 </button>
                             </form>
 
-                            <form action="{{ route('posts.force_delete', $post->id) }}" method="POST" onsubmit="return confirm('⚠️ ՈՒՇԱԴՐՈՒԹՅՈՒՆ: Այս գրառումը և նրա նկարները կջնջվեն ԸՆԴՄԻՇՏ։')">
+                            <form action="{{ route('posts.force_delete', $post->id) }}" method="POST" onsubmit="return confirm('{{ __('messages.warning_hard_delete') }}')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" style="background: white; color: #dc3545; border: 1px solid #dc3545; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.3s;"
                                         onmouseover="this.style.background='#dc3545'; this.style.color='white'" onmouseout="this.style.background='white'; this.style.color='#dc3545'">
-                                    Ջնջել ընդմիշտ
+                                   {{ __('messages.delete_forever') }}
                                 </button>
                             </form>
                         </div>
@@ -82,9 +83,9 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="{{ $title !== 'Իմ աղբամանը' ? 5 : 3 }}" style="padding: 60px 20px; text-align: center; color: #adb5bd;">
+                   <td colspan="{{ $title !== __('messages.my_trash') ? 5 : 3 }}" style="padding: 60px 20px; text-align: center; color: #adb5bd;">
                         <div style="font-size: 40px; margin-bottom: 10px;">🗑️</div>
-                        <div style="font-size: 16px; font-weight: 500;">Աղբամանը դատարկ է</div>
+                        <div style="font-size: 16px; font-weight: 500;">{{ __('messages.clear_trash') }}</div>
                     </td>
                 </tr>
             @endforelse
@@ -97,3 +98,5 @@
     button {display: inline-flex;align-items: center;justify-content: center;outline: none;}
     button:active {transform: scale(0.95);}
 </style>
+
+</x-app-layout>

@@ -1,8 +1,9 @@
-@include('components.header')
+<x-app-layout>
+    <x-slot:title>Կառավարման վահանակ</x-slot:title>
 
 <main style="max-width: 700px; margin: 40px auto; padding: 30px; background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); font-family: 'Segoe UI', sans-serif;">
 
-    <h2 style="text-align: center; color: #333; margin-bottom: 30px; font-weight: 700;">Ստեղծել նոր գրառում</h2>
+    <h2 style="text-align: center; color: #333; margin-bottom: 30px; font-weight: 700;">{{ __('messages.creat_new_post') }}</h2>
     @if ($errors->any())
         <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
             <ul style="margin: 0; padding-left: 20px;">
@@ -16,23 +17,23 @@
         @csrf
 
         <div style="margin-bottom: 25px;">
-            <label style="display: block; font-weight: 600; color: #444; margin-bottom: 8px;">Վերնագիր</label>
-            <input type="text" name="title" required placeholder="Մուտքագրեք վերնագիրը..."
+            <label style="display: block; font-weight: 600; color: #444; margin-bottom: 8px;">{{ __('messages.title') }}</label>
+            <input type="text" name="title" required placeholder="{{ __('messages.enter_title') }}"
                    style="width: 100%; padding: 14px; border: 2px solid #f0f0f0; border-radius: 12px; font-size: 16px; outline: none; transition: 0.3s; box-sizing: border-box;"
                    onfocus="this.style.border='2px solid #007bff'; this.style.background='#fff';"
                    onblur="this.style.background='#fcfcfc'">
         </div>
 
         <div style="margin-bottom: 25px;">
-            <label style="display: block; font-weight: 600; color: #444; margin-bottom: 8px;">Նկարներ</label>
+            <label style="display: block; font-weight: 600; color: #444; margin-bottom: 8px;">{{ __('messages.pictures') }}</label>
 
             <div style="position: relative;">
                 <label for="image-input" style="display: block; padding: 20px; background: #f8f9fb; border: 2px dashed #cbd5e0; border-radius: 12px; cursor: pointer; text-align: center; color: #718096; transition: 0.3s;"
                        onmouseover="this.style.borderColor='#007bff'; this.style.color='#007bff'"
                        onmouseout="this.style.borderColor='#cbd5e0'; this.style.color='#718096'">
                     <span style="font-size: 30px; display: block;">📷</span>
-                    <span style="font-weight: 500;">Սեղմեք նկարներ ավելացնելու համար</span>
-                    <br><small style="font-size: 12px; color: #a0aec0;">(Կարող եք ընտրել մի քանի ֆայլ)</small>
+                    <span style="font-weight: 500;">{{ __('messages.enter_for_add_pic') }}</span>
+                    <br><small style="font-size: 12px; color: #a0aec0;">({{ __('messages.select_multi') }})</small>
                 </label>
                 <input type="file" id="image-input" name="images[]" multiple accept="image/*" style="display: none;">
             </div>
@@ -41,13 +42,13 @@
         </div>
 
         <div style="margin-bottom: 30px;">
-            <label style="display: block; font-weight: 600; color: #444; margin-bottom: 8px;">Նկարագրություն</label>
-            <textarea name="body" rows="6" required placeholder="Գրեք բովանդակությունը այստեղ..."
+            <label style="display: block; font-weight: 600; color: #444; margin-bottom: 8px;">{{ __('messages.description') }}</label>
+            <textarea name="body" rows="6" required placeholder="{{ __('messages.enter_descrip') }}"
                       style="width: 100%; padding: 14px; border: 2px solid #f0f0f0; border-radius: 12px; font-size: 16px; outline: none; transition: 0.3s; resize: vertical; box-sizing: border-box;"
                       onfocus="this.style.border='2px solid #007bff'"></textarea>
         </div>
 
-        <label for="tags">Ընտրեք տագերը:</label>
+        <label for="tags">{{ __('messages.select_tags') }}</label>
             <select name="tags[]" id="tags" class="form-control" multiple>
              @foreach($tags as $tag)
                 <option value="{{ $tag->id }}">{{ $tag->name }}</option>
@@ -55,10 +56,10 @@
             </select>
 
             <div style="margin-bottom: 25px;">
-    <label style="display: block; font-weight: 600; color: #444; margin-bottom: 8px;">Կատեգորիա</label>
+    <label style="display: block; font-weight: 600; color: #444; margin-bottom: 8px;">{{ __('messages.categories') }}</label>
     <select name="category_id" id="category_id" required
             style="width: 100%; padding: 14px; border: 2px solid #f0f0f0; border-radius: 12px; font-size: 16px; outline: none; background: #fff;">
-        <option value="" disabled selected>Ընտրեք կատեգորիան</option>
+        <option value="" disabled selected>{{ __('messages.select_category') }}</option>
         @foreach($categories as $category)
             <option value="{{ $category->id }}">{{ $category->name }}</option>
         @endforeach
@@ -66,7 +67,7 @@
 </div>
 
         <button type="submit" style="width: 100%; background: #007bff; color: white; border: none; padding: 16px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,123,255,0.3);">
-            Հրապարակել գրառումը
+            {{ __('messages.publ_post') }}
         </button>
     </form>
 </main>
@@ -130,3 +131,5 @@
     button:hover {background: #0056b3 !important;transform: translateY(-1px);}
     button:active {transform: translateY(0);}
 </style>
+
+</x-app-layout>
