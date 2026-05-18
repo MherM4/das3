@@ -22,10 +22,10 @@ class UpdatePasswordRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'current_password.required' => 'Ընթացիկ գաղտնաբառը պարտադիր է:',
-            'new_password.required' => 'Նոր գաղտնաբառը պարտադիր է:',
-            'new_password.min' => 'Նոր գաղտնաբառը պետք է լինի առնվազն 8 նիշ:',
-            'new_password.confirmed' => 'Գաղտնաբառի հաստատումը չի համընկնում:',
+            'current_password.required' => __('messages.current_password_required'),
+            'new_password.required' => __('messages.new_password_required'),
+            'new_password.min' => __('messages.new_password_min_8'),
+            'new_password.confirmed' => __('messages.new_password_istn_confirmed'),
         ];
     }
 }

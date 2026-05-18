@@ -1,8 +1,10 @@
+<x-guest-layout>
+    <x-slot:title>{{ __('messages.login') }}</x-slot:title>
 <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f2f5; font-family: Arial, sans-serif;">
 
     <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center;">
 
-        <h2 style="color: #1877f2; margin-bottom: 20px;">Մուտք</h2>
+        <h2 style="color: #1877f2; margin-bottom: 20px;">{{ __('messages.login') }}</h2>
 
         @if(session('success'))
             <div style="background: #e7f3ff; color: #1877f2; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 14px;">
@@ -18,26 +20,26 @@
 
         <form action="/login" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
             @csrf
-            <input type="email" name="email" placeholder="Էլ․ հասցե" required
+            <input type="email" name="email" placeholder="{{ __('messages.email') }}" required
                    style="padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; outline: none;">
 
-            <input type="password" name="password" placeholder="Գաղտնաբառ" required
+            <input type="password" name="password" placeholder="{{ __('messages.password') }}" required
                    style="padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; outline: none;">
 
             <button type="submit"
                     style="background-color: #1877f2; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; transition: background 0.3s;">
-                Մուտք գործել
+                {{ __('messages.log_in') }}
             </button>
         </form>
 
         <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ddd;">
 
         <div style="font-size: 14px;">
-            Դեռ հաշիվ չունե՞ք:
+            {{ __('messages.no_acc_yet') }}
             <a href="{{ route('register') }}" style="color: #42b72a; text-decoration: none; font-weight: bold; font-size: 16px;">
-                Գրանցվել նոր հաշիվ
+                {{ __('messages.register_new_acc') }}
             </a>
         </div>
-    </div>
 
 </div>
+</x-guest-layout>

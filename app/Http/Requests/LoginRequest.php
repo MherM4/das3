@@ -23,9 +23,9 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required' => 'Էլ. հասցեն պարտադիր է մուտքի համար։',
-            'email.email' => 'Խնդրում ենք ներմուծել վավեր էլ. հասցե։',
-            'password.required' => 'Գաղտնաբառը պարտադիր է։',
+            'email.required' => __('messages.email_required'),
+            'email.email' => __('messages.pls_valid_email'),
+            'password.required' => __('messages.password_required'),
         ];
     }
 }

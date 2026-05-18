@@ -9,16 +9,16 @@
     </div>
 
     <div style="display: flex; gap: 10px; align-items: center;">
-    <a href="{{ route('lang.switch', 'hy') }}"
-       style="text-decoration: none; color: {{ app()->getLocale() == 'hy' ? '#007bff' : '#666' }}; font-weight: {{ app()->getLocale() == 'hy' ? 'bold' : 'normal' }};">
-        Հայ
-    </a>
-    <span style="color: #ccc;">|</span>
-    <a href="{{ route('lang.switch', 'en') }}"
-       style="text-decoration: none; color: {{ app()->getLocale() == 'en' ? '#007bff' : '#666' }}; font-weight: {{ app()->getLocale() == 'en' ? 'bold' : 'normal' }};">
-        Eng
-    </a>
-</div>
+        <a href="{{ route('lang.switch', 'hy') }}"
+           style="text-decoration: none; color: {{ app()->getLocale() == 'hy' ? '#007bff' : '#666' }}; font-weight: {{ app()->getLocale() == 'hy' ? 'bold' : 'normal' }};">
+            Հայ
+        </a>
+        <span style="color: #ccc;">|</span>
+        <a href="{{ route('lang.switch', 'en') }}"
+           style="text-decoration: none; color: {{ app()->getLocale() == 'en' ? '#007bff' : '#666' }}; font-weight: {{ app()->getLocale() == 'en' ? 'bold' : 'normal' }};">
+            Eng
+        </a>
+    </div>
 
 
 
@@ -62,7 +62,6 @@
     </nav>
 
 </header>
-<x-Subheader />
 <style>
     .dropdown-item {
         display: block;

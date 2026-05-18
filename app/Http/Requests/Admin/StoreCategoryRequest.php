@@ -24,8 +24,8 @@ class StoreCategoryRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name_hy.required' => 'Հայերեն անվանումը պարտադիր է:',
-            'name_en.required' => 'Անգլերեն անվանումը պարտադիր է:',
+            'name_hy.required' => __('messages.name_hy_required'),
+            'name_en.required' => __('messages.name_en_required'),
         ];
     }
 }

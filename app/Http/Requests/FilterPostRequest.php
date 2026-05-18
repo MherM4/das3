@@ -23,8 +23,8 @@ class FilterPostRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'category_id.exists' => 'Ընտրված կատեգորիան գոյություն չունի:',
-            'search.max' => 'Փնտրվող տեքստը չափազանց երկար է (առավելագույնը 100 նիշ):',
+            'category_id.exists' => __('messages.category_dosent_exists'),
+            'search.max' => __('messages.search_max_100'),
         ];
     }
 }

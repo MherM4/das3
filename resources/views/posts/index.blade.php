@@ -1,6 +1,8 @@
 <x-app-layout>
-    <x-slot:title>Կառավարման վահանակ</x-slot:title>
-
+    <x-slot:title>{{ __('messages.main') }}</x-slot:title>
+    <x-slot:subheader>
+        @include('components.SubHeader')
+    </x-slot:subheader>
 <main style="max-width: 800px; margin: 30px auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 0 15px;">
     @forelse($posts as $post)
         @include('components.post-card', ['post' => $post])

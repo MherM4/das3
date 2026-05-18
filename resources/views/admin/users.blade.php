@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot:title>Կառավարման վահանակ</x-slot:title>
+    <x-slot:title>{{ __('messages.user_managment') }}</x-slot:title>
 
 <main class="admin-container">
     <div class="admin-header">

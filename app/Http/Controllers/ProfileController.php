@@ -14,10 +14,19 @@ use App\Models\User;
 class ProfileController extends Controller
 {
 
+
+    public function myProfile()
+    {
+        $user = Auth::user();
+        $posts = $user->posts()->with('images')->latest()->paginate(10);;
+
+        return view('user.profile', compact('user', 'posts'));
+    }
+
+
     public function showProfile(User $user = null)
     {
-        $user = $user ?? Auth::user();
-        $posts = $user->posts()->latest()->get();
+        $posts = $user->posts()->latest()->paginate(10);
 
         return view('user.profile', compact('user', 'posts'));
     }
@@ -42,7 +51,7 @@ class ProfileController extends Controller
 
         $user->save();
 
-        return redirect()->route('profile')->with('success', 'Տվյալները թարմացվեցին:');
+        return redirect()->route('profile')->with('success', __('messages.data_uptdated'));
     }
 
     public function deleteAvatar()
@@ -52,7 +61,7 @@ class ProfileController extends Controller
             Storage::disk('public')->delete($user->avatar);
             $user->update(['avatar' => null]);
         }
-        return back()->with('success', 'Նկարը ջնջվեց:');
+        return back()->with('success', __('messages.avatar_deleted'));
     }
 
     public function showPasswordForm()
@@ -66,12 +75,12 @@ class ProfileController extends Controller
         $validated = $request->validated();
 
         if (!Hash::check($validated['current_password'], $user->password)) {
-            return back()->withErrors(['current_password' => 'Ընթացիկ գաղտնաբառը սխալ է:']);
+            return back()->withErrors(['current_password' => __('messages.current_password_wrong')]);
         }
 
         $user->update([ 'password' => Hash::make($validated['new_password'])]);
-        
-        return redirect()->route('profile')->with('success', 'Գաղտնաբառը փոխվեց:');
+
+        return redirect()->route('profile')->with('success',  __('messages.password_changed'));
     }
 
 

@@ -42,7 +42,7 @@
             <div class="carousel-container" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth;">
                 @foreach($post->images as $img)
                     <div style="min-width: 100%; scroll-snap-align: start; display: flex; justify-content: center; align-items: center; background: #f8f8f8;">
-                        <img src="{{ asset($img->image) }}" style="width: 100%; max-height: 500px; object-fit: cover; display: block;">
+                        <img src="{{ asset('storage/' . $img->image) }}" alt="Post Image" style="width: 100%; max-height: 500px; object-fit: cover; display: block;">
                     </div>
                 @endforeach
             </div>
@@ -75,6 +75,16 @@
                 <span style="font-weight: 600;">{{ $post->comments->count() }}</span>
             </div>
         </div>
+
+        @if($post->tags->count() > 0)
+        <div class="post-tags" style="margin-top: 10px; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 5px;">
+            @foreach($post->tags as $tag)
+                <span style="background-color: #e9ecef; color: #495057; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold;">
+                    #{{ $tag->name }}
+                </span>
+            @endforeach
+        </div>
+        @endif
 
         <form action="{{ route('posts.save', $post->id) }}" method="POST">
             @csrf

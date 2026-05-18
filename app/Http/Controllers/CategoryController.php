@@ -26,13 +26,13 @@ class CategoryController extends Controller
             ],
         ]);
 
-        return back()->with('success', 'Կատեգորիան հաջողությամբ ավելացվեց:');
+        return back()->with('success', __('messages.category_added'));
     }
 
     public function destroy(Category $category)
     {
         $this->authorize('delete', $category);
         $category->delete();
-        return back()->with('success', 'Կատեգորիան ջնջվեց:');
+        return back()->with('success', __('messages.category_deleted'));
     }
 }

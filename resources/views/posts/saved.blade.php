@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot:title>Կառավարման վահանակ</x-slot:title>
+    <x-slot:title>{{ __('messages.saves') }}</x-slot:title>
 
 <main style="max-width: 800px; margin: 30px auto; font-family: sans-serif; padding: 0 15px;">
 

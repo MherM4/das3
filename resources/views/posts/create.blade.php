@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot:title>Կառավարման վահանակ</x-slot:title>
+    <x-slot:title>{{ __('messages.creat_new_post') }}</x-slot:title>
 
 <main style="max-width: 700px; margin: 40px auto; padding: 30px; background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); font-family: 'Segoe UI', sans-serif;">
 
@@ -61,7 +61,16 @@
             style="width: 100%; padding: 14px; border: 2px solid #f0f0f0; border-radius: 12px; font-size: 16px; outline: none; background: #fff;">
         <option value="" disabled selected>{{ __('messages.select_category') }}</option>
         @foreach($categories as $category)
-            <option value="{{ $category->id }}">{{ $category->name }}</option>
+            @php
+                $locale = app()->getLocale();
+                if (is_array($category->name)) {
+                    $catName = $category->name[$locale] ?? array_values($category->name)[0];
+                } else {
+                    $decoded = json_decode($category->name, true);
+                    $catName = $decoded[$locale] ?? ($decoded['hy'] ?? $category->name);
+                }
+            @endphp
+            <option value="{{ $category->id }}">{{ $catName }}</option>
         @endforeach
     </select>
 </div>

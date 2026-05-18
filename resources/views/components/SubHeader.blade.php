@@ -1,5 +1,6 @@
 @php
 $categories = \App\Models\Category::has('posts')->get();
+$locale = app()->getLocale();
 @endphp
 
 <div style="background: #fff; border-bottom: 1px solid #eee; padding: 15px 0;">
@@ -21,10 +22,19 @@ $categories = \App\Models\Category::has('posts')->get();
 
             <select name="category_id" onchange="this.form.submit()"
                     style="padding: 10px; border-radius: 8px; border: 1px solid #ddd; outline: none; cursor: pointer;">
-                <option value="">{{__('messages.all_categories')}}</option>
+                <option value="">{{ __('messages.all_categories') }}</option>
                 @foreach($categories as $category)
+                    @php
+                        if (is_array($category->name)) {
+                            $catName = $category->name[$locale] ?? array_values($category->name)[0];
+                        } else {
+                            $decoded = json_decode($category->name, true);
+                            $catName = $decoded[$locale] ?? ($decoded['hy'] ?? $category->name);
+                        }
+                    @endphp
+
                     <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                        {{ $category->name }}
+                        {{ $catName }}
                     </option>
                 @endforeach
             </select>

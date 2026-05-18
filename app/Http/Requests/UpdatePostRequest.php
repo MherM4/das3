@@ -26,9 +26,9 @@ class UpdatePostRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'title.required' => 'Վերնագիրը պարտադիր է:',
-            'category_id.required' => 'Խնդրում ենք ընտրել կատեգորիան:',
-            'images.*.image' => 'Ֆայլը պետք է լինի նկար:',
+            'title.required' => __('messages.title_required'),
+            'category_id.required' => __('messages.pls_select_category'),
+            'images.*.image' => __('messages.file_must_be_image'),
         ];
     }
 }

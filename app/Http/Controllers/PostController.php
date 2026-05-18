@@ -14,6 +14,7 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Requests\FilterPostRequest;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Storage;
 
 
 class PostController extends Controller
@@ -45,12 +46,6 @@ class PostController extends Controller
     $categories = Category::all();
 
     return view('posts.index', compact('posts', 'categories'));
-    }
-
-    public function userPosts(User $user)
-    {
-        $posts = $user->posts()->with('images')->latest()->get();
-        return view('user.profile', compact('user', 'posts'));
     }
 
     public function manage()
@@ -86,7 +81,7 @@ class PostController extends Controller
         }
     }
 
-    return redirect()->route('posts.manage')->with('success', 'Գրառումը թարմացվեց:');
+    return redirect()->route('posts.manage')->with('success', __('messages.post_updated'));
 }
 
     public function create()
@@ -96,7 +91,7 @@ class PostController extends Controller
         return view('posts.create', compact('tags','categories'));
     }
 
-    public function store(StorePostRequest $request)
+public function store(StorePostRequest $request)
 {
     $post = auth()->user()->posts()->create($request->validated());
 
@@ -106,13 +101,12 @@ class PostController extends Controller
 
     if ($request->hasFile('images')) {
         foreach ($request->file('images') as $file) {
-            $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('posts'), $imageName);
-            $post->images()->create(['image' => 'posts/' . $imageName]);
+            $path = $file->store('posts', 'public');
+            $post->images()->create(['image' => $path]);
         }
     }
 
-    return redirect('/')->with('success', 'Գրառումը հաջողությամբ ստեղծվեց:');
+    return redirect('/')->with('success', __('messages.post_succs_created'));
 }
 
     public function destroy(Post $post)
@@ -124,7 +118,7 @@ class PostController extends Controller
 
         $post->delete();
 
-        return back()->with('success', 'Գրառումը տեղափոխվեց աղբաման:');
+        return back()->with('success', __('messages.post_moved_trash'));
     }
 
     public function myTrash()
@@ -144,10 +138,6 @@ class PostController extends Controller
 
     public function adminTrash()
     {
-        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'super_admin') {
-            abort(403);
-        }
-
         $posts = Post::onlyTrashed()->with(['user', 'images', 'deleter'])->latest()->get();
 
         return view('posts.trash', [
@@ -159,38 +149,28 @@ class PostController extends Controller
     public function restore($id)
     {
         $post = Post::withTrashed()->findOrFail($id);
-
-        if ($post->deleted_by !== auth()->id() && auth()->user()->role === 'user') {
-            abort(403, 'Դուք չեք կարող վերականգնել Admin-ի կողմից ջնջված գրառումը:');
-        }
-
         $post->restore();
 
         $post->deleted_by = null;
         $post->save();
 
-        return back()->with('success', 'Գրառումը վերականգնվեց:');
+        return back()->with('success', __('messages.post_restored'));
     }
 
     public function forceDelete($id)
     {
-        $post = Post::onlyTrashed()->with('images')->findOrFail($id);
-        $currentUser = Auth::user();
+    $post = Post::onlyTrashed()->with('images')->findOrFail($id);
 
-        if ($currentUser->id === $post->user_id || $currentUser->role === 'admin' || $currentUser->role === 'super_admin') {
+    $this->authorize('forceDelete', $post);
 
-            foreach ($post->images as $postImage) {
-                $filePath = public_path($postImage->image);
-                if (File::exists($filePath)) {
-                    File::delete($filePath);
-                }
-            }
-
-            $post->forceDelete();
-
-            return back()->with('success', 'Գրառումը վերջնականապես ջնջվեց:');
+    foreach ($post->images as $postImage) {
+        if (Storage::disk('public')->exists($postImage->image)) {
+            Storage::disk('public')->delete($postImage->image);
         }
-
-        return abort(403);
     }
+
+    $post->forceDelete();
+
+    return back()->with('success', __('messages.post_force_deleted'));
+}
 }

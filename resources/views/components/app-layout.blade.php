@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Իմ Բլոգը' }}</title>
-
+    <title>{{ $title ?? 'My Project' }}</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
     @stack('styles')
@@ -12,6 +11,9 @@
 <body style="margin: 0; padding: 0; background-color: #f4f7f6;">
 
     @include('components.header')
+    @if(isset($subheader))
+        {{ $subheader }}
+    @endif
 
     <main style="min-height: 80vh; padding: 20px;">
         {{ $slot }}

@@ -23,12 +23,12 @@ class RegisterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Անունը պարտադիր է։',
-            'email.required' => 'Էլ. հասցեն պարտադիր է։',
-            'email.unique' => 'Այս էլ. հասցեն արդեն գրանցված է։',
-            'password.required' => 'Գաղտնաբառը պարտադիր է։',
-            'password.min' => 'Գաղտնաբառը պետք է լինի առնվազն 8 նիշ։',
-            'password.confirmed' => 'Գաղտնաբառի հաստատումը չի համընկնում։',
+            'name.required' => __('messages.name_required'),
+            'email.required' => __('messages.email_required'),
+            'email.unique' => __('messages.email_unique'),
+            'password.required' =>__('messages.password_required'),
+            'password.min' => __('messages.password_min_8'),
+            'password.confirmed' => __('messages.password_isnt_confirmed'),
         ];
     }
 }

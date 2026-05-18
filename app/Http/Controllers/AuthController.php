@@ -17,7 +17,7 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    public function register(RegisterRequest $request) 
+    public function register(RegisterRequest $request)
 {
     $data = $request->validated();
 
@@ -28,7 +28,7 @@ class AuthController extends Controller
         'role' => 'user',
     ]);
 
-    return redirect('/login')->with('success', 'Գրանցումն հաջողվեց։ Կարող եք մուտք գործել։');
+    return redirect('/login')->with('success', __('messages.reg_succsesfully'));
 }
 
     public function showLogin()
@@ -43,14 +43,14 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             if (Auth::user()->is_blocked) {
                 Auth::logout();
-                return back()->withErrors(['email' => 'Ձեր հաշիվը արգելափակված է։']);
+                return back()->withErrors(['email' => __('messages.ur_acc_blocked')]);
             }
 
             $request->session()->regenerate();
             return redirect()->intended('/');
         }
 
-        return back()->withErrors(['email' => 'Մուտքանունը կամ գաղտնաբառը սխալ է։']);
+        return back()->withErrors(['email' => __('messages.wrong_log_or_pass')]);
     }
 
     public function logout(Request $request)

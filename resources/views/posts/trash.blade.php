@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot:title>Կառավարման վահանակ</x-slot:title>
+    <x-slot:title>{{ __('messages.trash') }}</x-slot:title>
 
 <main style="max-width: 1000px; margin: 30px auto; padding: 25px; font-family: 'Segoe UI', sans-serif;">
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px;">

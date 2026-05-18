@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot:title>Կառավարման վահանակ</x-slot:title>
+    <x-slot:title>{{ __('messages.my_posts') }}</x-slot:title>
 
 <main style="max-width: 900px; margin: 30px auto;">
     <div style="display: flex; justify-content: space-between; align-items: center;">

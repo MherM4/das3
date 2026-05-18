@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot:title>Կառավարման վահանակ</x-slot:title>
+    <x-slot:title>{{ __('messages.edit_profile') }}</x-slot:title>
 
 <main style="max-width: 600px; margin: 50px auto; padding: 20px; font-family: sans-serif;">
     <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center;">

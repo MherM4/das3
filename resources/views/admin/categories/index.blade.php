@@ -1,6 +1,5 @@
 <x-app-layout>
-    <x-slot:title>Կատեգորիաների կառավարում</x-slot:title>
-
+    <x-slot:title>{{ __('messages.catg_management') }}</x-slot:title>
     <main style="max-width: 800px; margin: 30px auto; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); font-family: sans-serif;">
         <h1 style="color: #333; font-size: 24px; margin-bottom: 20px;">{{ __('messages.category_mng') }}</h1>
 
@@ -32,10 +31,17 @@
             <tbody>
                 @foreach($categories as $category)
                     <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 12px; font-size: 16px;">{{ $category->name }}</td>
+                        <td style="padding: 12px; font-size: 16px;">
+                                @if(is_array($category->name))
+                                    {{ $category->name[app()->getLocale()] ?? array_values($category->name)[0] }}
+                                @else
+                                    @php $decoded = json_decode($category->name, true); @endphp
+                                    {{ $decoded[app()->getLocale()] ?? ($decoded['hy'] ?? $category->name) }}
+                                @endif
+                        </td>
                         <td style="padding: 12px; text-align: right;">
                             @can('delete', $category)
-                                <form action="{{ route('categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('Վստա՞հ եք:')">
+                                <form action="{{ route('categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('{{ __('messages.are_u_sure') }}')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 14px;">

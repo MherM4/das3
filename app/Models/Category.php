@@ -11,7 +11,9 @@ use HasTranslations;
 
     protected $fillable = ['name'];
     public $translatable = ['name'];
-    protected $casts = [];
+    protected $casts = [
+    'name' => 'array',
+];
 
     public function posts() {
         return $this->hasMany(Post::class);

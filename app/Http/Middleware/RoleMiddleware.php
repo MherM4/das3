@@ -23,7 +23,7 @@ class RoleMiddleware
         }
 
         if ($userRole !== $role) {
-            abort(403, 'Այս գործողությունը թույլատրված չէ։');
+            abort(403, __('messages.unauthorized_action'));
         }
 
         return $next($request);

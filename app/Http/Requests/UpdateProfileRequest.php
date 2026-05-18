@@ -24,11 +24,11 @@ class UpdateProfileRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Անունը պարտադիր է:',
-            'email.required' => 'Էլ. հասցեն պարտադիր է:',
-            'email.unique' => 'Այս էլ. հասցեն արդեն զբաղված է:',
-            'avatar.image' => 'Ֆայլը պետք է լինի նկար:',
-            'avatar.max' => 'Նկարի առավելագույն չափը 8ՄԲ է:',
+            'name.required' => __('messages.name_required'),
+            'email.required' => __('messages.email_required'),
+            'email.unique' => __('messages.email_unique'),
+            'avatar.image' => __('messages.avatar_must_image'),
+            'avatar.max' => __('messages.avatar_max_8mb'),
         ];
     }
 }

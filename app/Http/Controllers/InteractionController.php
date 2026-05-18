@@ -44,7 +44,7 @@ class InteractionController extends Controller
             'body' => $request->validated()['body']
         ]);
 
-        return back()->with('success', 'Մեկնաբանությունը ավելացվեց:');
+        return back()->with('success',  __('messages.comment_added'));
     }
 
     public function destroyComment(Comment $comment)
@@ -52,6 +52,6 @@ class InteractionController extends Controller
         $this->authorize('delete', $comment);
 
         $comment->delete();
-        return back()->with('success', 'Մեկնաբանությունը ջնջվեց:');
+        return back()->with('success',  __('messages.comment_deleted'));
     }
 }

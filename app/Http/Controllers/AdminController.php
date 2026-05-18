@@ -61,9 +61,9 @@ class AdminController extends Controller
 
         $user->comments()->delete();
 
-        $message = 'Օգտատերը բլոկվեց, և նրա լայքերն ու մեկնաբանությունները հեռացվեցին:';
+        $message = __('messages.user_blocked_content_deleted');
     } else {
-        $message = 'Օգտատերը հանվեց բլոկից:';
+        $message = __('messages.user_unblocked');
     }
 
     return back()->with('success', $message);
@@ -75,7 +75,7 @@ class AdminController extends Controller
 
         $user->update($request->validated());
 
-        return back()->with('success', 'Օգտատիրոջ դերը թարմացվեց:');
+        return back()->with('success', __('messages.user_role_updated'));
     }
 
     public function editUser(User $user)
@@ -97,7 +97,7 @@ class AdminController extends Controller
         }
 
         $user->save();
-        return redirect()->route('admin.users')->with('success', 'Տվյալները թարմացվեցին:');
+        return redirect()->route('admin.users')->with('success', __('messages.data_uptdated'));
     }
 
     public function adminDeleteAvatar(User $user)
@@ -107,8 +107,8 @@ class AdminController extends Controller
         if ($user->avatar) {
             Storage::disk('public')->delete($user->avatar);
             $user->update(['avatar' => null]);
-            return back()->with('success', 'Ավատարը ջնջվեց:');
+            return back()->with('success', __('messages.avatar_deleted'));
         }
-        return back()->with('error', 'Օգտատերը չունի ավատար:');
+        return back()->with('error', __('messages.user_havnt_avatar'));
     }
 }

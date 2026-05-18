@@ -8,6 +8,7 @@ use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\LocaleController;
 
 
 Route::middleware(['guest'])->group(function () {
@@ -19,7 +20,17 @@ Route::middleware(['guest'])->group(function () {
     });
 });
 
-Route::get('lang/{locale}', function ($locale) {if (in_array($locale, ['en', 'hy'])) {  Session::put('locale', $locale);} return redirect()->back();})->name('lang.switch');
+Route::get('lang/{locale}', function ($locale) {
+    if (in_array($locale, ['en', 'hy'])) {
+        Session::put('locale', $locale);
+        if (auth()->check()) {
+            auth()->user()->update(['language' => $locale]);
+        } else {
+            cookie()->queue('user_lang', $locale, 525600);
+        }
+    }
+    return redirect()->back();
+})->name('lang.switch');
 
 Route::middleware(['auth', 'no-cache'])->group(function () {
 
@@ -39,7 +50,7 @@ Route::middleware(['auth', 'no-cache'])->group(function () {
     Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
     Route::controller(ProfileController::class)->group(function () {
-        Route::get('/profile', 'showProfile')->name('profile');
+        Route::get('/profile', 'myProfile')->name('profile');
         Route::get('/profile/edit', 'editProfile')->name('profile.edit');
         Route::post('/profile/update', 'updateProfile')->name('profile.update');
         Route::post('/profile/avatar/delete', 'deleteAvatar')->name('avatar.delete');
@@ -70,7 +81,7 @@ Route::middleware(['auth', 'no-cache'])->group(function () {
             Route::post('/admin/users/{user}/role', 'changeRole')->name('admin.users.role');
             Route::post('/admin/users/{user}/avatar/delete', 'adminDeleteAvatar')->name('admin.users.delete_avatar');
         });
-        Route::get('/admin/trash', [PostController::class, 'adminTrash'])->name('admin.trash');
+        Route::get('/admin/trash', [PostController::class, 'adminTrash'])->name('admin.trash')->middleware('role:admin');;
     });
 
     Route::middleware(['role:super_admin'])->group(function () {

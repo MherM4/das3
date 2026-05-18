@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot:title>Կառավարման վահանակ</x-slot:title>
+    <x-slot:title>{{ __('messages.edit_pass') }}</x-slot:title>
 
 <main style="display: flex; justify-content: center; align-items: center; min-height: 80vh; background-color: #f0f2f5;">
     <div style="background: white; width: 100%; max-width: 400px; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
@@ -38,5 +38,4 @@
         </form>
     </div>
 </main>
-
 </x-app-layout>

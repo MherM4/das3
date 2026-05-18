@@ -17,7 +17,7 @@ class StorePostRequest extends FormRequest
             'title' => 'required|string|max:255',
             'body' => 'required|string',
             'images' => 'nullable|array|max:5',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:51020',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120',
             'tags' => 'nullable|array',
             'tags.*' => 'exists:tags,id',
             'category_id' => 'required|exists:categories,id',
@@ -27,11 +27,11 @@ class StorePostRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'title.required' => 'Վերնագիրը պարտադիր է:',
-            'body.required' => 'Բովանդակությունը պարտադիր է:',
-            'images.*.image' => 'Ֆայլը պետք է լինի նկար:',
-            'images.*.max' => 'Նկարի չափը չպետք է անցնի 50MB-ը:',
-            'images.max' => 'Դուք կարող եք վերբեռնել առավելագույնը 5 նկար:',
+            'title.required' => __('messages.title_required'),
+            'body.required' => __('messages.body_required'),
+            'images.*.image' => __('messages.file_must_be_image'),
+            'images.*.max' => __('messages.image_size_5mb'),
+            'images.max' => __('messages.images_max_5'),
         ];
     }
 }

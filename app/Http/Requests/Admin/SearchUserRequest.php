@@ -21,7 +21,7 @@ class SearchUserRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'search.max' => 'Փնտրվող տեքստը չի կարող գերազանցել 100 նիշը:',
+            'search.max' => __('messages.search_max_100'),
         ];
     }
 }

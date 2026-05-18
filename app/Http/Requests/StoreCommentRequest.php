@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCommentRequest extends FormRequest
 {
- 
+
    public function rules(): array
 {
     return [
@@ -18,8 +18,8 @@ class StoreCommentRequest extends FormRequest
 public function messages(): array
 {
     return [
-        'body.required' => 'Մեկնաբանությունը չի կարող դատարկ լինել:',
-        'body.max' => 'Մեկնաբանությունը չի կարող անցնել 500 նիշը:',
+        'body.required' => __('messages.comment_required'),
+        'body.max' => __('messages.comment_max_500'),
     ];
 }
 }
