@@ -8,8 +8,6 @@ use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
-use App\Http\Controllers\LocaleController;
-
 
 Route::middleware(['guest'])->group(function () {
     Route::controller(AuthController::class)->group(function () {
@@ -43,11 +41,10 @@ Route::middleware(['auth', 'no-cache'])->group(function () {
         Route::post('/posts/{post}/comment', 'storeComment')->name('posts.comment');
         Route::get('/saved-posts', 'savedPosts')->name('posts.saved');
         Route::delete('/comments/{comment}', 'destroyComment')->name('comments.destroy');
+
+        Route::post('/comments/{comment}/like', 'toggleCommentLike')->name('comments.like');
+        Route::post('/comments/{comment}/reply', 'storeReply')->name('comments.reply');
     });
-    Route::post('/categories/store', [CategoryController::class, 'store'])->name('categories.store');
-    Route::get('/admin/categories', [CategoryController::class, 'index'])->name('admin.categories');
-    Route::post('/admin/categories', [CategoryController::class, 'store'])->name('categories.store');
-    Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/profile', 'myProfile')->name('profile');
@@ -81,7 +78,11 @@ Route::middleware(['auth', 'no-cache'])->group(function () {
             Route::post('/admin/users/{user}/role', 'changeRole')->name('admin.users.role');
             Route::post('/admin/users/{user}/avatar/delete', 'adminDeleteAvatar')->name('admin.users.delete_avatar');
         });
-        Route::get('/admin/trash', [PostController::class, 'adminTrash'])->name('admin.trash')->middleware('role:admin');;
+
+        Route::get('/admin/categories', [CategoryController::class, 'index'])->name('admin.categories');
+        Route::post('/admin/categories', [CategoryController::class, 'store'])->name('admin.categories.store');
+        Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+        Route::get('/admin/trash', [PostController::class, 'adminTrash'])->name('admin.trash');
     });
 
     Route::middleware(['role:super_admin'])->group(function () {

@@ -4,7 +4,7 @@
         <h1 style="color: #333; font-size: 24px; margin-bottom: 20px;">{{ __('messages.category_mng') }}</h1>
 
 
-        <form action="{{ route('categories.store') }}" method="POST" style="display: flex; gap: 10px; margin-bottom: 30px;">
+        <form action="{{ route('admin.categories.store') }}" method="POST" style="display: flex; gap: 10px; margin-bottom: 30px;">
             @csrf
             <input type="text" name="name_hy" placeholder="{{ __('messages.category_am_name') }}" required
                    style="flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none;">

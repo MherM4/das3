@@ -3,6 +3,9 @@
     <x-slot:subheader>
         @include('components.SubHeader')
     </x-slot:subheader>
+
+@vite(['resources/css/post-index.css'])
+
 <main style="max-width: 800px; margin: 30px auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 0 15px;">
     @forelse($posts as $post)
         @include('components.post-card', ['post' => $post])
@@ -23,37 +26,5 @@
         </div>
     @endif
 </main>
-
-<style>
-    body {
-        background-color: #f8f9fa;
-        margin: 0;
-    }
-    nav svg {
-    max-height: 20px;
-    display: inline-block;
-}
-
-.pagination {
-    display: flex;
-    list-style: none;
-    gap: 5px;
-}
-
-.page-item .page-link {
-    padding: 8px 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    text-decoration: none;
-    color: #007bff;
-}
-
-.page-item.active .page-link {
-    background-color: #007bff;
-    color: white;
-    border-color: #007bff;
-}
-</style>
-
 
 </x-app-layout>

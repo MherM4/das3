@@ -26,13 +26,39 @@
         </div>
 
         <div style="margin-bottom: 20px;">
+            <label style="display: block; font-weight: 600; color: #444; margin-bottom: 8px;">{{ __('messages.select_category') }}</label>
+            <select name="category_id" required style="width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; box-sizing: border-box;">
+                @foreach($categories as $category)
+                    <option value="{{ $category->id }}" {{ $post->category_id == $category->id ? 'selected' : '' }}>
+                        {{ $category->name['hy'] ?? $category->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-weight: 600; color: #444; margin-bottom: 8px;">{{ __('messages.select_tags') }}</label>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; background: #f9f9f9; padding: 12px; border-radius: 10px; border: 1px solid #eee;">
+                @foreach($tags as $tag)
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                        <input type="checkbox" name="tags[]" value="{{ $tag->id }}"
+                            {{ $post->tags->contains($tag->id) ? 'checked' : '' }}>
+                        {{ $tag->name }}
+                    </label>
+                @endforeach
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
             <label style="display: block; font-weight: 600; color: #444; margin-bottom: 8px;">{{ __('messages.available_img') }}</label>
             <div style="display: flex; gap: 10px; flex-wrap: wrap; background: #f9f9f9; padding: 10px; border-radius: 10px;">
-                @foreach($post->images as $img)
+                @forelse($post->images as $img)
                     <div style="position: relative;">
-                        <img src="{{ asset($img->image) }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;">
+                        <img src="{{ asset('storage/' . $img->image) }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;">
                     </div>
-                @endforeach
+                @empty
+                    <p style="color: #888; font-size: 14px; margin: 5px 0;">{{ __('messages.no_images') }}</p>
+                @endforelse
             </div>
         </div>
 

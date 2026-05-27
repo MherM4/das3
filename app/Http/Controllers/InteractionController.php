@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Models\Post;
 use App\Models\Comment;
+use App\Models\CommentLike;
 use App\Http\Requests\StoreCommentRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class InteractionController extends Controller
 {
@@ -46,6 +48,36 @@ class InteractionController extends Controller
 
         return back()->with('success',  __('messages.comment_added'));
     }
+
+    public function toggleCommentLike(Comment $comment)
+    {
+        $like = $comment->commentLikes()->where('user_id', Auth::id())->first();
+
+        if ($like) {
+            $like->delete();
+        } else {
+            $comment->commentLikes()->create(['user_id' => Auth::id()]);
+        }
+
+        return back();
+    }
+
+    public function storeReply(Request $request, Comment $comment)
+    {
+        $validated = $request->validate([
+            'body' => 'required|string|max:1000',
+        ]);
+
+        Comment::create([
+            'user_id' => Auth::id(),
+            'post_id' => $comment->post_id,
+            'parent_id' => $comment->id,   
+            'body' => $validated['body']
+        ]);
+
+        return back()->with('success', __('messages.reply_added'));
+    }
+
 
     public function destroyComment(Comment $comment)
     {

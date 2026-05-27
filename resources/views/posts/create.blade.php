@@ -1,5 +1,6 @@
 <x-app-layout>
     <x-slot:title>{{ __('messages.creat_new_post') }}</x-slot:title>
+@vite(['resources/css/post-create.css','resources/js/post-create.js'])
 
 <main style="max-width: 700px; margin: 40px auto; padding: 30px; background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); font-family: 'Segoe UI', sans-serif;">
 
@@ -80,65 +81,4 @@
         </button>
     </form>
 </main>
-
-<script>
-    const imageInput = document.getElementById('image-input');
-    const previewContainer = document.getElementById('preview-container');
-
-    let dataTransfer = new DataTransfer();
-
-    imageInput.addEventListener('change', function(e) {
-        const files = Array.from(e.target.files);
-
-        files.forEach((file, index) => {
-            dataTransfer.items.add(file);
-
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'preview-item';
-                wrapper.style.position = 'relative';
-                wrapper.style.width = '100%';
-                wrapper.style.paddingTop = '100%';
-                wrapper.style.borderRadius = '10px';
-                wrapper.style.overflow = 'hidden';
-                wrapper.style.border = '1px solid #ddd';
-
-                wrapper.innerHTML = `
-                    <img src="${event.target.result}" style="position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover;">
-                    <div onclick="removeImage(this, ${dataTransfer.items.length - 1})"
-                         style="position: absolute; top: 5px; right: 5px; background: rgba(255, 77, 77, 0.9); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; font-weight: bold; border: 2px solid white; z-index: 10;">
-                        &times;
-                    </div>
-                `;
-                previewContainer.appendChild(wrapper);
-            };
-            reader.readAsDataURL(file);
-        });
-
-        imageInput.files = dataTransfer.files;
-    });
-
-    function removeImage(button, fileIndex) {
-        button.parentElement.remove();
-
-        const newDataTransfer = new DataTransfer();
-        const { files } = dataTransfer;
-
-        for (let i = 0; i < files.length; i++) {
-            if (i !== fileIndex) {
-                newDataTransfer.items.add(files[i]);
-            }
-        }
-
-        dataTransfer = newDataTransfer;
-        imageInput.files = dataTransfer.files;
-    }
-</script>
-
-<style>
-    button:hover {background: #0056b3 !important;transform: translateY(-1px);}
-    button:active {transform: translateY(0);}
-</style>
-
 </x-app-layout>

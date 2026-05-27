@@ -31,7 +31,8 @@ class CategorySeeder extends Seeder
         ];
 
         foreach ($categories as $cat) {
-            Category::create([ 'name' => json_encode($cat['name'])
+            Category::create([
+                'name' => $cat['name']
             ]);
         }
     }

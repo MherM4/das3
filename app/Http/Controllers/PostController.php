@@ -9,43 +9,58 @@ use App\Models\Tag;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Requests\FilterPostRequest;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
 
-
 class PostController extends Controller
 {
     use AuthorizesRequests;
+
     public function index(FilterPostRequest $request)
-{
-    $query = Post::with(['user', 'images', 'likes', 'comments', 'category', 'tags']);
+    {
+        $query = Post::with(['user', 'images', 'likes', 'comments', 'category', 'tags']);
+        $validated = $request->validated();
 
-    $validated = $request->validated();
+        if (!empty($validated['category_id'])) {
+            $query->where('category_id', $validated['category_id']);
+        }
 
+        if (!empty($validated['search'])) {
+            $search = $validated['search'];
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                  ->orWhere('body', 'LIKE', "%{$search}%")
+                  ->orWhereHas('tags', function($t) use ($search) {
+                      $t->where('name', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
 
-    if (!empty($validated['category_id'])) {
-        $query->where('category_id', $validated['category_id']);
+        $posts = $query->latest()->paginate(10);
+        $categories = Category::all();
+
+        return view('posts.index', compact('posts', 'categories'));
     }
 
-    if (!empty($validated['search'])) {
-        $search = $validated['search'];
-        $query->where(function($q) use ($search) {
-            $q->where('title', 'LIKE', "%{$search}%")
-              ->orWhere('body', 'LIKE', "%{$search}%")
-              ->orWhereHas('tags', function($t) use ($search) {
-                  $t->where('name', 'LIKE', "%{$search}%");
-              });
-        });
-    }
+    public function store(StorePostRequest $request)
+    {
+        $post = auth()->user()->posts()->create($request->validated());
 
-    $posts = $query->latest()->paginate(10);
-    $categories = Category::all();
+        if ($request->has('tags')) {
+            $post->tags()->sync($request->tags);
+        }
 
-    return view('posts.index', compact('posts', 'categories'));
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $path = $this->uploadImage($file);
+                $post->images()->create(['image' => $path]);
+            }
+        }
+
+        return redirect('/')->with('success', __('messages.post_succs_created'));
     }
 
     public function manage()
@@ -65,24 +80,21 @@ class PostController extends Controller
     }
 
     public function update(UpdatePostRequest $request, Post $post)
-{
-    $this->authorize('update', $post);
+    {
+        $this->authorize('update', $post);
 
-    $post->update($request->validated());
+        $post->update($request->validated());
+        $post->tags()->sync($request->tags);
 
-
-    $post->tags()->sync($request->tags);
-
-    if ($request->hasFile('images')) {
-        foreach ($request->file('images') as $file) {
-            $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('posts'), $imageName);
-            $post->images()->create(['image' => 'posts/' . $imageName]);
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $path = $this->uploadImage($file);
+                $post->images()->create(['image' => $path]);
+            }
         }
-    }
 
-    return redirect()->route('posts.manage')->with('success', __('messages.post_updated'));
-}
+        return redirect()->route('posts.manage')->with('success', __('messages.post_updated'));
+    }
 
     public function create()
     {
@@ -91,31 +103,11 @@ class PostController extends Controller
         return view('posts.create', compact('tags','categories'));
     }
 
-public function store(StorePostRequest $request)
-{
-    $post = auth()->user()->posts()->create($request->validated());
-
-    if ($request->has('tags')) {
-        $post->tags()->sync($request->tags);
-    }
-
-    if ($request->hasFile('images')) {
-        foreach ($request->file('images') as $file) {
-            $path = $file->store('posts', 'public');
-            $post->images()->create(['image' => $path]);
-        }
-    }
-
-    return redirect('/')->with('success', __('messages.post_succs_created'));
-}
-
     public function destroy(Post $post)
     {
         $this->authorize('update', $post);
-
         $post->deleted_by = auth()->id();
         $post->save();
-
         $post->delete();
 
         return back()->with('success', __('messages.post_moved_trash'));
@@ -123,13 +115,7 @@ public function store(StorePostRequest $request)
 
     public function myTrash()
     {
-        $posts = Auth::user()->posts()
-            ->onlyTrashed()
-            ->where('deleted_by', Auth::id())
-            ->with('images')
-            ->latest()
-            ->get();
-
+        $posts = Auth::user()->posts()->onlyTrashed() ->where('deleted_by', Auth::id()) ->with('images') ->latest() ->get();
         return view('posts.trash', [
             'posts' => $posts,
             'title' => __('messages.my_trash')
@@ -149,8 +135,9 @@ public function store(StorePostRequest $request)
     public function restore($id)
     {
         $post = Post::withTrashed()->findOrFail($id);
-        $post->restore();
+        $this->authorize('restore', $post);
 
+        $post->restore();
         $post->deleted_by = null;
         $post->save();
 
@@ -159,18 +146,24 @@ public function store(StorePostRequest $request)
 
     public function forceDelete($id)
     {
-    $post = Post::onlyTrashed()->with('images')->findOrFail($id);
+        $post = Post::onlyTrashed()->with('images')->findOrFail($id);
 
-    $this->authorize('forceDelete', $post);
+        $this->authorize('forceDelete', $post);
 
-    foreach ($post->images as $postImage) {
-        if (Storage::disk('public')->exists($postImage->image)) {
-            Storage::disk('public')->delete($postImage->image);
+        foreach ($post->images as $postImage) {
+            if (Storage::disk('public')->exists($postImage->image)) {
+                Storage::disk('public')->delete($postImage->image);
+            }
         }
+
+        $post->forceDelete();
+
+        return back()->with('success', __('messages.post_force_deleted'));
     }
 
-    $post->forceDelete();
-
-    return back()->with('success', __('messages.post_force_deleted'));
-}
+    protected function uploadImage($file): string
+    {
+        $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        return $file->storeAs('posts', $imageName, 'public');
+    }
 }

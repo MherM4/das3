@@ -30,4 +30,9 @@ class PostPolicy
     {
     return $user->id === $post->user_id;
     }
+
+    public function restore(User $user, Post $post)
+{
+    return $user->id === $post->user_id || $user->hasRole('super-admin');
+}
 }

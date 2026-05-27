@@ -1,0 +1,2 @@
+button {display: inline-flex;align-items: center;justify-content: center;outline: none;}
+button:active {transform: scale(0.95);}

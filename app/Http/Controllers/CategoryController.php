@@ -19,13 +19,15 @@ class CategoryController extends Controller
 
     public function store(StoreCategoryRequest $request)
     {
+
+        $this->authorize('create', Category::class);
+        
          Category::create([
             'name' => [
                 'hy' => $request->name_hy,
                 'en' => $request->name_en,
             ],
         ]);
-
         return back()->with('success', __('messages.category_added'));
     }
 

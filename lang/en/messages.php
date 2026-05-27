@@ -162,7 +162,11 @@ return [
     'catg_management'=>'Category management',
     'control_panel'=>'Control panel',
 
-
+    'no_images'=>'No picture',
+    'reply'=>'Reply',
+    'view_replies'=>'• View replies',
+    'hide_replies'=>'• Hide replies',
+    'reply_to'=>'Reply to @',
 
     'exit'=>'Exit',
 ];

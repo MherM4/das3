@@ -1,5 +1,6 @@
 <x-app-layout>
     <x-slot:title>{{ __('messages.trash') }}</x-slot:title>
+@vite(['resources/css/post-trash.css'])
 
 <main style="max-width: 1000px; margin: 30px auto; padding: 25px; font-family: 'Segoe UI', sans-serif;">
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px;">
@@ -93,10 +94,4 @@
         </table>
     </div>
 </main>
-
-<style>
-    button {display: inline-flex;align-items: center;justify-content: center;outline: none;}
-    button:active {transform: scale(0.95);}
-</style>
-
 </x-app-layout>

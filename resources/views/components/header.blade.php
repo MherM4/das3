@@ -1,3 +1,5 @@
+@vite(['resources/css/header.css','resources/js/header.js'])
+
 <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 50px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-family: sans-serif; position: sticky; top: 0; z-index: 1000;">
 
     <div style="display: flex; align-items: center; gap: 30px;">
@@ -62,39 +64,4 @@
     </nav>
 
 </header>
-<style>
-    .dropdown-item {
-        display: block;
-        padding: 12px 15px;
-        text-decoration: none;
-        color: #333;
-        font-size: 14px;
-        transition: 0.2s;
-    }
-    .dropdown-item:hover {
-        background-color: #f8f9fa;
-        padding-left: 20px;
-        color: #007bff;
-    }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-</style>
 
-<script>
-    function toggleMenu() {
-        const menu = document.getElementById('dropdownMenu');
-        if (menu.style.display === 'none' || menu.style.display === '') {
-            menu.style.display = 'block';
-        } else {
-            menu.style.display = 'none';
-        }
-    }
-
-    window.onclick = function(event) {
-        if (!event.target.closest('.user-dropdown')) {
-            document.getElementById('dropdownMenu').style.display = 'none';
-        }
-    }
-</script>

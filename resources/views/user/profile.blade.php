@@ -1,5 +1,6 @@
 <x-app-layout>
     <x-slot:title>{{ __('messages.profile') }}</x-slot:title>
+@vite(['resources/css/post-index.css'])
 
 <main style="max-width: 900px; margin: 30px auto; padding: 25px; font-family: sans-serif;">
 
@@ -40,49 +41,5 @@
 
 
 </main>
-
-<script>
-    function moveCarousel(postId, direction) {
-        const container = document.querySelector(`#carousel-${postId} .carousel-container`);
-        if(container) {
-            const slideWidth = container.offsetWidth;
-            container.scrollBy({
-                left: direction * slideWidth,
-                behavior: 'smooth'
-            });
-        }
-    }
-</script>
-
-<style>
-    body {
-        background-color: #f8f9fa;
-        margin: 0;
-    }
-    nav svg {
-    max-height: 20px;
-    display: inline-block;
-}
-
-.pagination {
-    display: flex;
-    list-style: none;
-    gap: 5px;
-}
-
-.page-item .page-link {
-    padding: 8px 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    text-decoration: none;
-    color: #007bff;
-}
-
-.page-item.active .page-link {
-    background-color: #007bff;
-    color: white;
-    border-color: #007bff;
-}
-</style>
 
 </x-app-layout>

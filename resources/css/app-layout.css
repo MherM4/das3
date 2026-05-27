@@ -1,0 +1,6 @@
+.carousel-container::-webkit-scrollbar { display: none; }
+    .carousel-container { -ms-overflow-style: none; scrollbar-width: none; }
+    .carousel-btn {position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: 0.3s;}
+    .carousel-btn:hover { background: rgba(0,0,0,0.8); }
+    .edit-post-btn {text-decoration: none; background: #f0f7ff; color: #007bff; border: 1px solid #cce5ff; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 5px;}
+    .delete-post-btn {background: #fff5f5; color: #e53e3e; border: 1px solid #fed7d7; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer;}
