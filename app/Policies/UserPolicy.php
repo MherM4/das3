@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class UserPolicy
 {
@@ -24,6 +23,7 @@ class UserPolicy
         if ($targetUser->role === 'super_admin') {
             return false;
         }
+
         return $user->role === 'admin' || $user->role === 'super_admin';
     }
 
@@ -33,15 +33,15 @@ class UserPolicy
     }
 
     public function changeRole(User $user, User $targetUser): bool
-{
-    if ($user->role === 'admin') {
-        return $targetUser->role !== 'super_admin' && $targetUser->role !== 'admin';
-    }
+    {
+        if ($user->role === 'admin') {
+            return $targetUser->role !== 'super_admin' && $targetUser->role !== 'admin';
+        }
 
-    if ($user->role === 'super_admin') {
-        return $user->id !== $targetUser->id;
-    }
+        if ($user->role === 'super_admin') {
+            return $user->id !== $targetUser->id;
+        }
 
-    return false;
-}
+        return false;
+    }
 }

@@ -26,7 +26,7 @@ class RegisterRequest extends FormRequest
             'name.required' => __('messages.name_required'),
             'email.required' => __('messages.email_required'),
             'email.unique' => __('messages.email_unique'),
-            'password.required' =>__('messages.password_required'),
+            'password.required' => __('messages.password_required'),
             'password.min' => __('messages.password_min_8'),
             'password.confirmed' => __('messages.password_isnt_confirmed'),
         ];

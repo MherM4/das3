@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Post;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
@@ -32,9 +30,8 @@ class Comment extends Model
 
     public function commentLikes()
     {
-        return $this->hasMany(\App\Models\CommentLike::class);
+        return $this->hasMany(CommentLike::class);
     }
-
 
     public function getAllReplies()
     {
@@ -48,6 +45,7 @@ class Comment extends Model
         };
 
         $getNested($this);
+
         return $allReplies->sortBy('created_at');
     }
 

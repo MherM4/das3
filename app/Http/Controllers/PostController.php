@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Post;
-use App\Models\User;
-use App\Models\Tag;
-use App\Models\Category;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\FilterPostRequest;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
-use App\Http\Requests\FilterPostRequest;
+use App\Models\Category;
+use App\Models\Post;
+use App\Models\Tag;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
@@ -24,18 +21,18 @@ class PostController extends Controller
         $query = Post::with(['user', 'images', 'likes', 'comments', 'category', 'tags']);
         $validated = $request->validated();
 
-        if (!empty($validated['category_id'])) {
+        if (! empty($validated['category_id'])) {
             $query->where('category_id', $validated['category_id']);
         }
 
-        if (!empty($validated['search'])) {
+        if (! empty($validated['search'])) {
             $search = $validated['search'];
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('title', 'LIKE', "%{$search}%")
-                  ->orWhere('body', 'LIKE', "%{$search}%")
-                  ->orWhereHas('tags', function($t) use ($search) {
-                      $t->where('name', 'LIKE', "%{$search}%");
-                  });
+                    ->orWhere('body', 'LIKE', "%{$search}%")
+                    ->orWhereHas('tags', function ($t) use ($search) {
+                        $t->where('name', 'LIKE', "%{$search}%");
+                    });
             });
         }
 
@@ -66,6 +63,7 @@ class PostController extends Controller
     public function manage()
     {
         $posts = Auth::user()->posts()->with('images')->latest()->get();
+
         return view('posts.manage', compact('posts'));
     }
 
@@ -76,7 +74,7 @@ class PostController extends Controller
         $tags = Tag::all();
         $categories = Category::all();
 
-        return view('posts.edit', compact('post','tags','categories'));
+        return view('posts.edit', compact('post', 'tags', 'categories'));
     }
 
     public function update(UpdatePostRequest $request, Post $post)
@@ -100,7 +98,8 @@ class PostController extends Controller
     {
         $tags = Tag::all();
         $categories = Category::all();
-        return view('posts.create', compact('tags','categories'));
+
+        return view('posts.create', compact('tags', 'categories'));
     }
 
     public function destroy(Post $post)
@@ -115,10 +114,11 @@ class PostController extends Controller
 
     public function myTrash()
     {
-        $posts = Auth::user()->posts()->onlyTrashed() ->where('deleted_by', Auth::id()) ->with('images') ->latest() ->get();
+        $posts = Auth::user()->posts()->onlyTrashed()->where('deleted_by', Auth::id())->with('images')->latest()->get();
+
         return view('posts.trash', [
             'posts' => $posts,
-            'title' => __('messages.my_trash')
+            'title' => __('messages.my_trash'),
         ]);
     }
 
@@ -128,7 +128,7 @@ class PostController extends Controller
 
         return view('posts.trash', [
             'posts' => $posts,
-            'title' =>  __('messages.general_trash')
+            'title' => __('messages.general_trash'),
         ]);
     }
 
@@ -163,7 +163,8 @@ class PostController extends Controller
 
     protected function uploadImage($file): string
     {
-        $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        $imageName = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+
         return $file->storeAs('posts', $imageName, 'public');
     }
 }

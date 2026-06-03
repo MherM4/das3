@@ -13,26 +13,26 @@ class CategorySeeder extends Seeder
             [
                 'name' => [
                     'hy' => 'Տնտեսություն',
-                    'en' => 'Economy'
+                    'en' => 'Economy',
                 ],
             ],
             [
                 'name' => [
                     'hy' => 'Սպորտ',
-                    'en' => 'Sport'
+                    'en' => 'Sport',
                 ],
             ],
             [
                 'name' => [
                     'hy' => 'Տեխնոլոգիաներ',
-                    'en' => 'Technologies'
+                    'en' => 'Technologies',
                 ],
             ],
         ];
 
         foreach ($categories as $cat) {
             Category::create([
-                'name' => $cat['name']
+                'name' => $cat['name'],
             ]);
         }
     }

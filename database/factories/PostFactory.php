@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -15,13 +17,13 @@ class PostFactory extends Factory
      *
      * @return array<string, mixed>
      */
-   public function definition(): array
-{
-    return [
-        'title' => fake()->sentence(4),
-        'body' => fake()->paragraphs(3, true),
-        'user_id' => \App\Models\User::first()->id ?? \App\Models\User::factory(),
-        'category_id' => \App\Models\Category::first()->id ?? \App\Models\Category::factory(),
-    ];
-}
+    public function definition(): array
+    {
+        return [
+            'title' => fake()->sentence(4),
+            'body' => fake()->paragraphs(3, true),
+            'user_id' => User::first()->id ?? User::factory(),
+            'category_id' => Category::first()->id ?? Category::factory(),
+        ];
+    }
 }

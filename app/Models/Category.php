@@ -7,15 +7,18 @@ use Spatie\Translatable\HasTranslations;
 
 class Category extends Model
 {
-use HasTranslations;
+    use HasTranslations;
 
     protected $fillable = ['name'];
-    public $translatable = ['name'];
-    protected $casts = [
-    'name' => 'array',
-];
 
-    public function posts() {
+    public $translatable = ['name'];
+
+    protected $casts = [
+        'name' => 'array',
+    ];
+
+    public function posts()
+    {
         return $this->hasMany(Post::class);
     }
 }

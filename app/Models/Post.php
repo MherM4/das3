@@ -11,14 +11,14 @@ class Post extends Model
     use HasFactory;
     use SoftDeletes;
 
-
-    protected $fillable = ['title', 'body', 'image', 'user_id','category_id'];
+    protected $fillable = ['title', 'body', 'image', 'user_id', 'category_id'];
 
     public function getImageUrlAttribute()
     {
         if ($this->image) {
             return asset($this->image);
         }
+
         return null;
     }
 
@@ -27,7 +27,8 @@ class Post extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function images() {
+    public function images()
+    {
         return $this->hasMany(PostImage::class);
     }
 
@@ -36,31 +37,38 @@ class Post extends Model
         return $this->belongsTo(User::class, 'deleted_by');
     }
 
-    public function likes() {
+    public function likes()
+    {
         return $this->hasMany(Like::class);
     }
 
-    public function comments() {
+    public function comments()
+    {
         return $this->hasMany(Comment::class);
     }
 
-    public function saves() {
+    public function saves()
+    {
         return $this->hasMany(Save::class);
     }
 
-    public function isLikedByAuthUser() {
+    public function isLikedByAuthUser()
+    {
         return $this->likes()->where('user_id', auth()->id())->exists();
     }
 
-    public function isSavedByAuthUser() {
+    public function isSavedByAuthUser()
+    {
         return $this->saves()->where('user_id', auth()->id())->exists();
     }
 
-    public function tags() {
-    return $this->belongsToMany(Tag::class);
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
     }
 
-    public function category() {
+    public function category()
+    {
         return $this->belongsTo(Category::class);
     }
 }

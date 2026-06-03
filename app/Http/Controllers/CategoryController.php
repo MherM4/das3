@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Http\Requests\Admin\StoreCategoryRequest;
+use App\Models\Category;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class CategoryController extends Controller
@@ -14,6 +14,7 @@ class CategoryController extends Controller
     {
         $this->authorize('create', Category::class);
         $categories = Category::all();
+
         return view('admin.categories.index', compact('categories'));
     }
 
@@ -21,13 +22,14 @@ class CategoryController extends Controller
     {
 
         $this->authorize('create', Category::class);
-        
-         Category::create([
+
+        Category::create([
             'name' => [
                 'hy' => $request->name_hy,
                 'en' => $request->name_en,
             ],
         ]);
+
         return back()->with('success', __('messages.category_added'));
     }
 
@@ -35,6 +37,7 @@ class CategoryController extends Controller
     {
         $this->authorize('delete', $category);
         $category->delete();
+
         return back()->with('success', __('messages.category_deleted'));
     }
 }

@@ -7,9 +7,8 @@ use App\Models\User;
 
 class LikePolicy
 {
-
     public function toggle(User $user, Post $post): bool
     {
-        return !$user->is_blocked;
+        return ! $user->is_blocked;
     }
 }

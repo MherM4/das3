@@ -12,7 +12,7 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, string $role)
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return redirect('login');
         }
 

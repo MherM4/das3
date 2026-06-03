@@ -8,12 +8,10 @@ use Illuminate\View\Component;
 
 class AppLayout extends Component
 {
-
     public function __construct()
     {
         //
     }
-
 
     public function render(): View|Closure|string
     {

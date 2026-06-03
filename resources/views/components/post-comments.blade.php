@@ -68,9 +68,14 @@
     <form action="{{ route('posts.comment', $post->id) }}" method="POST" id="main-comment-form-{{ $post->id }}" style="display: flex; gap: 8px; align-items: center; position: relative;">
         @csrf
         <input type="hidden" name="parent_id" id="parent-id-{{ $post->id }}" value="">
-        <input type="text" name="body" id="comment-input-{{ $post->id }}" placeholder="{{ Lang::has('messages.write_comment') ? __('messages.write_comment') : 'Write a comment...' }}" required style="flex: 1; border: 1px solid #ddd; padding: 8px 15px; padding-right: 40px; border-radius: 20px; outline: none; font-size: 14px;">
+        <input type="text" name="body" id="comment-input-{{ $post->id }}" placeholder="{{ Lang::has('messages.write_comment') ? __('messages.write_comment') : 'Write a comment...' }}"  style="flex: 1; border: 1px solid #ddd; padding: 8px 15px; padding-right: 40px; border-radius: 20px; outline: none; font-size: 14px;">
         <button type="button" id="cancel-reply-{{ $post->id }}" onclick="resetCommentInput({{ $post->id }})" style="display: none; position: absolute; right: 55px; background: none; border: none; color: #999; cursor: pointer; font-size: 16px;">✕</button>
         <button type="submit" style="background: #007bff; color: white; border: none; padding: 0 15px; height: 36px; border-radius: 20px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center;">➤</button>
+        @error('body')
+            <div style="color: red; font-size: 12px; margin-top: 5px; margin-left: 15px;">
+                {{ $message }}
+            </div>
+        @enderror
     </form>
 </div>
 <script>

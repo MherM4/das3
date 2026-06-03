@@ -1,11 +1,11 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\InteractionController;
-use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
@@ -27,6 +27,7 @@ Route::get('lang/{locale}', function ($locale) {
             cookie()->queue('user_lang', $locale, 525600);
         }
     }
+
     return redirect()->back();
 })->name('lang.switch');
 
@@ -54,6 +55,9 @@ Route::middleware(['auth', 'no-cache'])->group(function () {
         Route::get('/profile/password', 'showPasswordForm')->name('password.edit');
         Route::post('/profile/password', 'updatePassword')->name('password.update');
         Route::get('/user/{user}/profile', 'showProfile')->name('user.profile');
+        Route::post('/avatar/delete/{user}', 'deleteAvatar')->name('avatar.delete');
+        Route::post('/avatar/restore/{user}', 'restoreAvatar')->name('avatar.restore');
+        Route::post('/avatar/force-delete', 'forceDeleteAvatar')->name('avatar.forceDelete');
     });
 
     Route::controller(PostController::class)->group(function () {
@@ -70,7 +74,6 @@ Route::middleware(['auth', 'no-cache'])->group(function () {
 
     Route::middleware(['role:admin'])->group(function () {
         Route::controller(AdminController::class)->group(function () {
-            Route::get('/admin/dashboard', 'adminDashboard')->name('admin.dashboard');
             Route::get('/admin/users', 'adminUsers')->name('admin.users');
             Route::get('/admin/users/{user}/edit', 'editUser')->name('admin.users.edit');
             Route::put('/admin/users/{user}/update', 'updateUser')->name('admin.users.update');

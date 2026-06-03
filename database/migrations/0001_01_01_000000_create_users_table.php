@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('language')->default('hy');
             $table->boolean('is_blocked')->default(false);
+            $table->timestamp('avatar_deleted_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

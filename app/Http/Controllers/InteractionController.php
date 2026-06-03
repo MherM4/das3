@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use App\Models\Post;
-use App\Models\Comment;
-use App\Models\CommentLike;
 use App\Http\Requests\StoreCommentRequest;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Comment;
+use App\Models\Post;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class InteractionController extends Controller
 {
     use AuthorizesRequests;
+
     public function toggleLike(Post $post)
     {
         $like = $post->likes()->where('user_id', Auth::id())->first();
@@ -43,10 +43,10 @@ class InteractionController extends Controller
     {
         $post->comments()->create([
             'user_id' => Auth::id(),
-            'body' => $request->validated()['body']
+            'body' => $request->validated()['body'],
         ]);
 
-        return back()->with('success',  __('messages.comment_added'));
+        return back()->with('success', __('messages.comment_added'));
     }
 
     public function toggleCommentLike(Comment $comment)
@@ -71,19 +71,19 @@ class InteractionController extends Controller
         Comment::create([
             'user_id' => Auth::id(),
             'post_id' => $comment->post_id,
-            'parent_id' => $comment->id,   
-            'body' => $validated['body']
+            'parent_id' => $comment->id,
+            'body' => $validated['body'],
         ]);
 
         return back()->with('success', __('messages.reply_added'));
     }
-
 
     public function destroyComment(Comment $comment)
     {
         $this->authorize('delete', $comment);
 
         $comment->delete();
-        return back()->with('success',  __('messages.comment_deleted'));
+
+        return back()->with('success', __('messages.comment_deleted'));
     }
 }

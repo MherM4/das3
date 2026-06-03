@@ -14,12 +14,10 @@ class PostPolicy
         }
     }
 
-
     public function update(User $user, Post $post): bool
     {
         return $user->id === $post->user_id;
     }
-
 
     public function delete(User $user, Post $post): bool
     {
@@ -28,11 +26,11 @@ class PostPolicy
 
     public function forceDelete(User $user, Post $post): bool
     {
-    return $user->id === $post->user_id;
+        return $user->id === $post->user_id;
     }
 
     public function restore(User $user, Post $post)
-{
-    return $user->id === $post->user_id || $user->hasRole('super-admin');
-}
+    {
+        return $user->id === $post->user_id || $user->hasRole('super_admin');
+    }
 }
