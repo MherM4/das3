@@ -17,20 +17,25 @@ class AdminController extends Controller
 
     public function adminUsers(SearchUserRequest $request)
     {
-        $this->authorize('viewAny', User::class);
+    $this->authorize('viewAny', User::class);
+    $query = User::where('id', '!=', auth()->id());
 
-        $query = User::where('id', '!=', auth()->id());
+    if ($request->filled('search')) {
+        $search = $request->validated('search');
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%$search%")->orWhere('email', 'like', "%$search%");
+        });
+    }
 
-        if ($request->filled('search')) {
-            $search = $request->validated('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%$search%")->orWhere('email', 'like', "%$search%");
-            });
-        }
+    $sortField = $request->get('sort', 'id');
+    $sortDirection = $request->get('direction', 'asc');
+    $allowedFields = ['id', 'name', 'email', 'role'];
+    if (in_array($sortField, $allowedFields)) {
+        $query->orderBy($sortField, $sortDirection === 'desc' ? 'desc' : 'asc');
+    }
 
-        $users = $query->paginate(10);
-
-        return view('admin.users', compact('users'));
+    $users = $query->paginate(10)->appends($request->query());
+    return view('admin.users', compact('users'));
     }
 
     public function toggleBlock(User $user)

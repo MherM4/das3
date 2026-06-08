@@ -42,7 +42,6 @@ Route::middleware(['auth', 'no-cache'])->group(function () {
         Route::post('/posts/{post}/comment', 'storeComment')->name('posts.comment');
         Route::get('/saved-posts', 'savedPosts')->name('posts.saved');
         Route::delete('/comments/{comment}', 'destroyComment')->name('comments.destroy');
-
         Route::post('/comments/{comment}/like', 'toggleCommentLike')->name('comments.like');
         Route::post('/comments/{comment}/reply', 'storeReply')->name('comments.reply');
     });

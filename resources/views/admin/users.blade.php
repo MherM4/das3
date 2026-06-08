@@ -6,7 +6,10 @@
     <div class="admin-header">
         <h1>{{ __('messages.user_managment') }}</h1>
         <div class="search-box">
-            <input type="text" id="searchInput" oninput="liveSearch()" placeholder="{{ __('messages.quick_search') }}">
+           <form action="{{ route('admin.users') }}" method="GET" class="search-box">
+    <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('messages.quick_search') }}">
+    <button type="submit" class="btn-search">{{ __('messages.search') }}</button>
+</form>
         </div>
     </div>
 
@@ -17,15 +20,15 @@
     <div style="overflow-x: auto;">
         <table class="user-table">
             <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>{{ __('messages.name') }}</th>
-                    <th>{{ __('messages.email') }}</th>
-                    <th>{{ __('messages.role') }}</th>
-                    <th>{{ __('messages.status') }}</th>
-                    <th style="text-align: center;">{{ __('messages.action') }}</th>
-                </tr>
-            </thead>
+    <tr>
+        <th><a href="{{ request()->fullUrlWithQuery(['sort' => 'id', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}">ID</a></th>
+        <th><a href="{{ request()->fullUrlWithQuery(['sort' => 'name', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}">{{ __('messages.name') }}</a></th>
+        <th><a href="{{ request()->fullUrlWithQuery(['sort' => 'email', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}">{{ __('messages.email') }}</a></th>
+        <th><a href="{{ request()->fullUrlWithQuery(['sort' => 'role', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}">{{ __('messages.role') }}</a></th>
+        <th>{{ __('messages.status') }}</th>
+        <th style="text-align: center;">{{ __('messages.action') }}</th>
+    </tr>
+</thead>
             <tbody id="userTable">
                 @foreach($users as $user)
                     <tr class="user-row">

@@ -11,6 +11,7 @@ use App\Models\Tag;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 
 class PostController extends Controller
 {
@@ -18,8 +19,11 @@ class PostController extends Controller
 
     public function index(FilterPostRequest $request)
     {
+    $validated = $request->validated();
+    $page = $request->get('page', 1);
+    $cacheKey = 'posts_page_' . $page . '_' . md5(json_encode($validated));
+    $posts = Cache::remember($cacheKey, 3600, function () use ($validated) {
         $query = Post::with(['user', 'images', 'likes', 'comments', 'category', 'tags']);
-        $validated = $request->validated();
 
         if (! empty($validated['category_id'])) {
             $query->where('category_id', $validated['category_id']);
@@ -35,11 +39,13 @@ class PostController extends Controller
                     });
             });
         }
+        return $query->latest()->paginate(10);
+    });
+    $categories = Cache::remember('all_categories', 86400, function () {
+        return Category::all();
+    });
 
-        $posts = $query->latest()->paginate(10);
-        $categories = Category::all();
-
-        return view('posts.index', compact('posts', 'categories'));
+    return view('posts.index', compact('posts', 'categories'));
     }
 
     public function store(StorePostRequest $request)

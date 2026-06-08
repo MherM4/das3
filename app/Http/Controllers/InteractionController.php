@@ -8,6 +8,8 @@ use App\Models\Post;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+
 
 class InteractionController extends Controller
 {
@@ -17,7 +19,7 @@ class InteractionController extends Controller
     {
         $like = $post->likes()->where('user_id', Auth::id())->first();
         $like ? $like->delete() : $post->likes()->create(['user_id' => Auth::id()]);
-
+        Cache::flush();
         return back();
     }
 
@@ -25,7 +27,7 @@ class InteractionController extends Controller
     {
         $save = $post->saves()->where('user_id', Auth::id())->first();
         $save ? $save->delete() : $post->saves()->create(['user_id' => Auth::id()]);
-
+        Cache::flush();
         return back();
     }
 
@@ -45,7 +47,7 @@ class InteractionController extends Controller
             'user_id' => Auth::id(),
             'body' => $request->validated()['body'],
         ]);
-
+        Cache::flush();
         return back()->with('success', __('messages.comment_added'));
     }
 
@@ -58,7 +60,7 @@ class InteractionController extends Controller
         } else {
             $comment->commentLikes()->create(['user_id' => Auth::id()]);
         }
-
+        Cache::flush();
         return back();
     }
 
@@ -74,7 +76,7 @@ class InteractionController extends Controller
             'parent_id' => $comment->id,
             'body' => $validated['body'],
         ]);
-
+        Cache::flush();
         return back()->with('success', __('messages.reply_added'));
     }
 
@@ -83,7 +85,7 @@ class InteractionController extends Controller
         $this->authorize('delete', $comment);
 
         $comment->delete();
-
+        Cache::flush();
         return back()->with('success', __('messages.comment_deleted'));
     }
 }

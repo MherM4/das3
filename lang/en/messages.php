@@ -167,5 +167,11 @@ return [
     'hide_replies' => '• Hide replies',
     'reply_to' => 'Reply to @',
 
+    'pwd_change_subject' => 'About your password change',
+    'pwd_change_line1' => 'Your account password has been successfully changed.',
+    'pwd_change_line2' => 'If you did not perform this action, please contact the administrator immediately or recover your access.',
+    'pwd_change_action' => 'Go to profile',
+    'pwd_change_thanks' => 'Thank you for being with us!',
+
     'exit' => 'Exit',
 ];

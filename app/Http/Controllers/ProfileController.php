@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdatePasswordRequest;
 use App\Http\Requests\UpdateProfileRequest;
+use App\Notifications\PasswordChangedNotification;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -84,15 +85,14 @@ class ProfileController extends Controller
 
     public function updatePassword(UpdatePasswordRequest $request)
     {
-        $user = Auth::user();
-        $validated = $request->validated();
+    $user = Auth::user();
+    $validated = $request->validated();
 
-        if (! Hash::check($validated['current_password'], $user->password)) {
-            return back()->withErrors(['current_password' => __('messages.current_password_wrong')]);
-        }
-
-        $user->update(['password' => Hash::make($validated['new_password'])]);
-
-        return redirect()->route('profile')->with('success', __('messages.password_changed'));
+    if (! Hash::check($validated['current_password'], $user->password)) {
+        return back()->withErrors(['current_password' => __('messages.current_password_wrong')]);
+    }
+    $user->update(['password' => Hash::make($validated['new_password'])]);
+    $user->notify(new \App\Notifications\PasswordChangedNotification());
+    return redirect()->route('profile')->with('success', __('messages.password_changed'));
     }
 }
