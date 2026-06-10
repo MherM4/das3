@@ -4,16 +4,31 @@
         <h1 style="color: #333; font-size: 24px; margin-bottom: 20px;">{{ __('messages.category_mng') }}</h1>
 
 
-        <form action="{{ route('admin.categories.store') }}" method="POST" style="display: flex; gap: 10px; margin-bottom: 30px;">
-            @csrf
-            <input type="text" name="name_hy" placeholder="{{ __('messages.category_am_name') }}" required
-                   style="flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none;">
-            <input type="text" name="name_en" placeholder="{{ __('messages.category_en_name') }}" required
-                   style="flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none;">
-            <button type="submit" style="background: #28a745; color: white; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">
-                {{ __('messages.add') }}
-            </button>
-        </form>
+    <form action="{{ route('admin.categories.store') }}" method="POST" style="margin-bottom: 30px;">
+        @csrf
+
+            <div style="display: flex; gap: 30px; align-items: flex-start;">
+                <div style="flex: 1;">
+                    <input type="text" name="name_hy" placeholder="{{ __('messages.category_am_name') }}"
+                           style="width: 100%; padding: 12px; border: 1px solid {{ $errors->has('name_hy') ? 'red' : '#ddd' }}; border-radius: 8px; outline: none;">
+                    @error('name_hy')
+                        <div style="color: red; font-size: 12px; margin-top: 5px;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div style="flex: 1;">
+                    <input type="text" name="name_en" placeholder="{{ __('messages.category_en_name') }}"
+                           style="width: 100%; padding: 12px; border: 1px solid {{ $errors->has('name_en') ? 'red' : '#ddd' }}; border-radius: 8px; outline: none;">
+                    @error('name_en')
+                        <div style="color: red; font-size: 12px; margin-top: 5px;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <button type="submit" style="background: #28a745; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                    {{ __('messages.add') }}
+                </button>
+            </div>
+    </form>
 
         @if(session('success'))
             <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 8px; margin-bottom: 20px;">

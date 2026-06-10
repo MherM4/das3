@@ -51,7 +51,6 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
         $post = auth()->user()->posts()->create($request->validated());
-
         if ($request->has('tags')) {
             $post->tags()->sync($request->tags);
         }
@@ -62,7 +61,7 @@ class PostController extends Controller
                 $post->images()->create(['image' => $path]);
             }
         }
-
+        Cache::flush();
         return redirect('/')->with('success', __('messages.post_succs_created'));
     }
 
@@ -96,7 +95,7 @@ class PostController extends Controller
                 $post->images()->create(['image' => $path]);
             }
         }
-
+        Cache::flush();
         return redirect()->route('posts.manage')->with('success', __('messages.post_updated'));
     }
 
@@ -114,7 +113,7 @@ class PostController extends Controller
         $post->deleted_by = auth()->id();
         $post->save();
         $post->delete();
-
+        Cache::flush();
         return back()->with('success', __('messages.post_moved_trash'));
     }
 

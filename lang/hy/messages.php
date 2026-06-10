@@ -173,5 +173,8 @@ return [
     'pwd_change_action' => 'Մուտք գործել պրոֆիլ',
     'pwd_change_thanks' => 'Շնորհակալություն մեզ հետ լինելու համար!',
 
+    'category_is_required'=>'Բաժինը պարտադրի է',
+
+
     'exit' => 'Ելք',
 ];

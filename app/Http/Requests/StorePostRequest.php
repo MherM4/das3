@@ -16,11 +16,11 @@ class StorePostRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'body' => 'required|string',
-            'images' => 'nullable|array|max:5',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120',
+            'category_id' => 'required|exists:categories,id',
             'tags' => 'nullable|array',
             'tags.*' => 'exists:tags,id',
-            'category_id' => 'required|exists:categories,id',
+            'images' => 'nullable|array|max:5',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ];
     }
 
@@ -29,7 +29,9 @@ class StorePostRequest extends FormRequest
         return [
             'title.required' => __('messages.title_required'),
             'body.required' => __('messages.body_required'),
+            'category_id.required' => __('messages.category_is_required'),
             'images.*.image' => __('messages.file_must_be_image'),
+            'images.*.mimes' => __('messages.file_must_be_image_format'),
             'images.*.max' => __('messages.image_size_5mb'),
             'images.max' => __('messages.images_max_5'),
         ];

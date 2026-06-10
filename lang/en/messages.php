@@ -173,5 +173,7 @@ return [
     'pwd_change_action' => 'Go to profile',
     'pwd_change_thanks' => 'Thank you for being with us!',
 
+    'category_is_required'=>'Category is required',
+
     'exit' => 'Exit',
 ];
