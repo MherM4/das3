@@ -29,6 +29,7 @@ class UpdatePostRequest extends FormRequest
             'title.required' => __('messages.title_required'),
             'category_id.required' => __('messages.pls_select_category'),
             'images.*.image' => __('messages.file_must_be_image'),
+            'body.required'=>__('messages.body_required'),
         ];
     }
 }
