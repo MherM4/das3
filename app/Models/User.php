@@ -73,6 +73,8 @@ class User extends Authenticatable
     {
     return !empty($this->avatar) && is_null($this->avatar_deleted_at);
     }
-    
 
+    public function chats() {
+    return $this->belongsToMany(Chat::class, 'chat_user');
+}
 }

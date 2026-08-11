@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
@@ -71,23 +72,45 @@ Route::middleware(['auth', 'no-cache'])->group(function () {
         Route::delete('/posts/{id}/force-delete', 'forceDelete')->name('posts.force_delete');
     });
 
-    Route::middleware(['role:admin'])->group(function () {
-        Route::controller(AdminController::class)->group(function () {
-            Route::get('/admin/users', 'adminUsers')->name('admin.users');
-            Route::get('/admin/users/{user}/edit', 'editUser')->name('admin.users.edit');
-            Route::put('/admin/users/{user}/update', 'updateUser')->name('admin.users.update');
-            Route::post('/admin/users/{user}/block', 'toggleBlock')->name('admin.users.block');
-            Route::post('/admin/users/{user}/role', 'changeRole')->name('admin.users.role');
-            Route::post('/admin/users/{user}/avatar/delete', 'adminDeleteAvatar')->name('admin.users.delete_avatar');
-        });
-
-        Route::get('/admin/categories', [CategoryController::class, 'index'])->name('admin.categories');
-        Route::post('/admin/categories', [CategoryController::class, 'store'])->name('admin.categories.store');
-        Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
-        Route::get('/admin/trash', [PostController::class, 'adminTrash'])->name('admin.trash');
+    Route::middleware(['role:admin'])->prefix('admin')->group(function () {
+    Route::controller(AdminController::class)->prefix('users')->group(function () {
+        Route::get('/', 'adminUsers')->name('admin.users');
+        Route::get('/{user}/edit', 'editUser')->name('admin.users.edit');
+        Route::put('/{user}/update', 'updateUser')->name('admin.users.update');
+        Route::post('/{user}/block', 'toggleBlock')->name('admin.users.block');
+        Route::post('/{user}/role', 'changeRole')->name('admin.users.role');
+        Route::post('/{user}/avatar/delete', 'adminDeleteAvatar')->name('admin.users.delete_avatar');
     });
+
+    Route::controller(CategoryController::class)->prefix('categories')->group(function () {
+        Route::get('/', 'index')->name('admin.categories');
+        Route::post('/', 'store')->name('admin.categories.store');
+        Route::delete('/{category}', 'destroy')->name('categories.destroy');
+    });
+
+    Route::get('/trash', [PostController::class, 'adminTrash'])->name('admin.trash');
+});
 
     Route::middleware(['role:super_admin'])->group(function () {
         Route::get('/super-admin/settings', [AdminController::class, 'superSettings'])->name('super.settings');
     });
+
+   Route::controller(ChatController::class)->prefix('chat')->group(function () {
+    Route::get('/', 'index')->name('chat.index');
+    Route::get('/trash', 'trash')->name('chat.trash');
+    Route::get('/{chat}', 'show')->name('chat.show');
+
+    Route::post('/start/{user}', 'startChat')->name('chat.start');
+    Route::delete('/{chat}/delete', 'destroy')->name('chat.destroy');
+    Route::patch('/{chat}/restore', 'restore')->name('chat.restore');
+    Route::delete('/{chat}/force-delete', 'forceDelete')->name('chat.forceDelete');
+    Route::post('/{chat}/leave', 'leaveChat')->name('chat.leave');
+    Route::post('/{chat}/set-admin/{userId}', 'setAdmin')->name('chat.set-admin');
+    Route::patch('/{chat}/rename', 'updateName')->name('chat.rename');
+    Route::patch('/{chat}/remove-name', 'removeName')->name('chat.remove-name');
+
+    Route::post('/send', 'sendMessage')->name('chat.send');
+    Route::put('/message/{message}', 'updateMessage')->name('chat.message.update');
+    Route::delete('/message/{message}', 'destroyMessage')->name('chat.message.destroy');
+});
 });

@@ -1,23 +1,21 @@
 <?php
 
-use App\Models\Post;
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+use App\Models\Chat;
 use Illuminate\Support\Facades\Schedule;
-
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+use Illuminate\Support\Facades\Storage;
 
 Schedule::call(function () {
-    $oldPosts = Post::onlyTrashed()->where('deleted_at', '<=', now()->subDays(30))->get();
-
-    foreach ($oldPosts as $post) {
-        foreach ($post->images as $img) {
-            if (file_exists(public_path($img->image))) {
-                unlink(public_path($img->image));
+    Chat::onlyTrashed()
+        ->where('deleted_at', '<=', now()->subDays(3))
+        ->chunkById(100, function ($chats) {
+            foreach ($chats as $chat) {
+                $chat->messages()->onlyTrashed()->each(function ($msg) {
+                    if ($msg->file_path) {
+                        Storage::disk('public')->delete($msg->file_path);
+                    }
+                });
+                $chat->messages()->onlyTrashed()->forceDelete();
+                $chat->forceDelete();
             }
-        }
-        $post->forceDelete();
-    }
+        });
 })->daily();

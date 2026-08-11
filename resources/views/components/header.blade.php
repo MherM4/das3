@@ -22,7 +22,8 @@
         </a>
     </div>
 
-
+    <a href="{{ route('chat.index') }}" style="text-decoration: none; color: #333; font-size: 20px;">
+        💬 </a>
 
     <nav style="display: flex; align-items: center; gap: 25px;">
         <div class="user-dropdown" style="position: relative; display: inline-block;">
